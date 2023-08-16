@@ -121,23 +121,39 @@ class AllVariantsAdapter:
         logger.info("Loading data.")
 
         # read from csv 'data/all_variants.sampled.csv'
-        self.data = pd.read_csv(
-            "data/all_variants.sampled.csv", sep="\t", header=0
-        )
+        data = pd.read_csv("data/all_variants.sampled.csv", sep="\t", header=0)
 
         # one row is one variant node, first select the columns given by the
         # node_fields parameter
-        self.variants = self.data[
+        self.variants = data[
             [
                 field.value
                 for field in self.node_fields
-                if field.value in self.data.columns
+                if field.value in data.columns
             ]
         ]
 
+        # if ID is '.', generate md5 hash from other columns
+        self.variants["ID"] = self.variants.apply(
+            lambda row: hashlib.md5(
+                "".join(
+                    [
+                        str(row[column])
+                        for column in self.variants.columns
+                        if column != "ID"
+                    ]
+                ).encode("utf-8")
+            ).hexdigest()
+            if row["ID"] == "."
+            else row["ID"],
+            axis=1,
+        )
+
         # PATIENTS: select the PATIENT.ID column and drop duplicates
         if AllVariantsAdapterNodeType.PATIENT in self.node_types:
-            self.patients = self.data[[AllVariantsAdapterPatientField.ID.value]].drop_duplicates()
+            self.patients = data[
+                [AllVariantsAdapterPatientField.ID.value]
+            ].drop_duplicates()
 
     def get_nodes(self):
         """
@@ -158,73 +174,35 @@ class AllVariantsAdapter:
         # column), node label (hardcode to 'variant' for now), and node
         # properties (dict of column names and values, except the 'ID')
 
-        for _, node in self.data.iterrows():
-            # if ID is '.', generate md5 hash from other columns
-            if node["ID"] == ".":
-                node["ID"] = hashlib.md5(
-                    "".join(
-                        [
-                            str(node[column])
-                            for column in self.data.columns
-                            if column != "ID"
-                        ]
-                    ).encode("utf-8")
-                ).hexdigest()
-
+        for _, node in self.variants.iterrows():
             yield (
                 node["ID"],
                 "variant",
                 node.drop("ID").to_dict(),
             )
 
-    def get_edges(self, probability: float = 0.3):
+    def get_edges(self):
         """
         Returns a generator of edge tuples for edge types specified in the
         adapter constructor.
-
-        Args:
-            probability: Probability of generating an edge between two nodes.
         """
 
         logger.info("Generating edges.")
 
-        for node in self.variants:
-            if random.random() < probability:
-                other_node = random.choice(self.variants)
-
-                # generate random relationship id by choosing upper or lower letters and integers, length 10, and joining them
-                relationship_id = "".join(
-                    random.choice(string.ascii_letters + string.digits)
-                    for _ in range(10)
-                )
-
-                # determine type of edge from other_node type
-                if (
-                    isinstance(other_node, Protein)
-                    and AllVariantsAdapterEdgeType.PROTEIN_PROTEIN_INTERACTION
-                    in self.edge_types
-                ):
-                    edge_type = (
-                        AllVariantsAdapterEdgeType.PROTEIN_PROTEIN_INTERACTION.value
-                    )
-                elif (
-                    isinstance(other_node, Disease)
-                    and AllVariantsAdapterEdgeType.PROTEIN_DISEASE_ASSOCIATION
-                    in self.edge_types
-                ):
-                    edge_type = (
-                        AllVariantsAdapterEdgeType.PROTEIN_DISEASE_ASSOCIATION.value
-                    )
-                else:
-                    continue
-
-                yield (
-                    relationship_id,
-                    node.get_id(),
-                    other_node.get_id(),
-                    edge_type,
-                    {"example_proptery": "example_value"},
-                )
+        # yield 5-tuple of edge id (hash of patient and variant ids), source
+        # node id, target node id, edge label (hardcode to 'patient_has_variant'
+        # for now), and edge properties (empty dict for now)
+        for _, row in self.variants.iterrows():
+            p_id = row[AllVariantsAdapterPatientField.ID.value]
+            v_id = row[AllVariantsAdapterVariantField.ID.value]
+            _id = hashlib.md5((p_id + v_id).encode("utf-8")).hexdigest()
+            yield (
+                _id,
+                p_id,
+                v_id,
+                "patient_has_variant",
+                {},
+            )
 
     def get_node_count(self):
         """
@@ -260,131 +238,3 @@ class AllVariantsAdapter:
             self.edge_fields = edge_fields
         else:
             self.edge_fields = [field for field in chain()]
-
-
-class Node:
-    """
-    Base class for nodes.
-    """
-
-    def __init__(self):
-        self.id = None
-        self.label = None
-        self.properties = {}
-
-    def get_id(self):
-        """
-        Returns the node id.
-        """
-        return self.id
-
-    def get_label(self):
-        """
-        Returns the node label.
-        """
-        return self.label
-
-    def get_properties(self):
-        """
-        Returns the node properties.
-        """
-        return self.properties
-
-
-class Protein(Node):
-    """
-    Generates instances of proteins.
-    """
-
-    def __init__(self, fields: Optional[list] = None):
-        self.fields = fields
-        self.id = self._generate_id()
-        self.label = "uniprot_protein"
-        self.properties = self._generate_properties()
-
-    def _generate_id(self):
-        """
-        Generate a random UniProt-style id.
-        """
-        lets = [random.choice(string.ascii_uppercase) for _ in range(3)]
-        nums = [random.choice(string.digits) for _ in range(3)]
-
-        # join alternating between lets and nums
-        return "".join([x for y in zip(lets, nums) for x in y])
-
-    def _generate_properties(self):
-        properties = {}
-
-        ## random amino acid sequence
-        if (
-            self.fields is not None
-            and AllVariantsAdapterPatientField.SEQUENCE in self.fields
-        ):
-
-            # random int between 50 and 250
-            l = random.randint(50, 250)
-
-            properties["sequence"] = "".join(
-                [random.choice("ACDEFGHIKLMNPQRSTVWY") for _ in range(l)],
-            )
-
-        ## random description
-        if (
-            self.fields is not None
-            and AllVariantsAdapterPatientField.DESCRIPTION in self.fields
-        ):
-            properties["description"] = " ".join(
-                [random.choice(string.ascii_lowercase) for _ in range(10)],
-            )
-
-        ## taxon
-        if (
-            self.fields is not None
-            and AllVariantsAdapterPatientField.TAXON in self.fields
-        ):
-            properties["taxon"] = "9606"
-
-        return properties
-
-
-class Disease(Node):
-    """
-    Generates instances of diseases.
-    """
-
-    def __init__(self, fields: Optional[list] = None):
-        self.fields = fields
-        self.id = self._generate_id()
-        self.label = "do_disease"
-        self.properties = self._generate_properties()
-
-    def _generate_id(self):
-        """
-        Generate a random disease id.
-        """
-        nums = [random.choice(string.digits) for _ in range(8)]
-
-        return f"DOID:{''.join(nums)}"
-
-    def _generate_properties(self):
-        properties = {}
-
-        ## random name
-        if (
-            self.fields is not None
-            and AllVariantsAdapterVariantField.NAME in self.fields
-        ):
-            properties["name"] = " ".join(
-                [random.choice(string.ascii_lowercase) for _ in range(10)],
-            )
-
-        ## random description
-        if (
-            self.fields is not None
-            and AllVariantsAdapterVariantField.DESCRIPTION in self.fields
-        ):
-            properties["description"] = " ".join(
-                [random.choice(string.ascii_lowercase) for _ in range(10)],
-            )
-
-        return properties

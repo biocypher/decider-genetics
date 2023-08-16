@@ -51,7 +51,7 @@ adapter = AllVariantsAdapter(
 
 # Create a knowledge graph from the adapter
 bc.write_nodes(adapter.get_nodes())
-# bc.add(adapter.get_edges())
+bc.write_edges(adapter.get_edges())
 
 # Write admin import statement
 data = bc.write_import_call()

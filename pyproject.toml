@@ -15,3 +15,6 @@ biocypher = "^0.5.4"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 80
