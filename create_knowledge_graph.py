@@ -54,7 +54,7 @@ bc.write_nodes(adapter.get_nodes())
 # bc.add(adapter.get_edges())
 
 # Write admin import statement
-data = bc.to_df()
+data = bc.write_import_call()
 
 # Print summary
 bc.summary()

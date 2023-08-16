@@ -24,7 +24,7 @@ class AllVariantsAdapterPatientField(Enum):
     Define possible fields the adapter can provide for patients.
     """
 
-    ID = "id"
+    ID = "patient"
 
 
 class AllVariantsAdapterVariantField(Enum):
@@ -111,6 +111,33 @@ class AllVariantsAdapter:
         self._set_types_and_fields(
             node_types, node_fields, edge_types, edge_fields
         )
+        self._load_data()
+
+    def _load_data(self):
+        """
+        Read CSV and create dataframes for variants and patients according to
+        the selected fields.
+        """
+        logger.info("Loading data.")
+
+        # read from csv 'data/all_variants.sampled.csv'
+        self.data = pd.read_csv(
+            "data/all_variants.sampled.csv", sep="\t", header=0
+        )
+
+        # one row is one variant node, first select the columns given by the
+        # node_fields parameter
+        self.variants = self.data[
+            [
+                field.value
+                for field in self.node_fields
+                if field.value in self.data.columns
+            ]
+        ]
+
+        # PATIENTS: select the PATIENT.ID column and drop duplicates
+        if AllVariantsAdapterNodeType.PATIENT in self.node_types:
+            self.patients = self.data[[AllVariantsAdapterPatientField.ID.value]].drop_duplicates()
 
     def get_nodes(self):
         """
@@ -120,33 +147,25 @@ class AllVariantsAdapter:
 
         logger.info("Generating nodes.")
 
-        # read from csv 'data/all_variants.sampled.csv'
-        nodes = pd.read_csv(
-            "data/all_variants.sampled.csv", sep="\t", header=0
-        )
+        for _, patient in self.patients.iterrows():
+            yield (
+                patient[AllVariantsAdapterPatientField.ID.value],
+                "patient",
+                {},
+            )
 
-        # one row is one variant node, first select the columns given by the
-        # node_fields parameter
-        nodes = nodes[
-            [
-                field.value
-                for field in self.node_fields
-                if field.value in nodes.columns
-            ]
-        ]
+        # VARIANTS: for each node (row), yield a 3-tuple of node id (the 'ID'
+        # column), node label (hardcode to 'variant' for now), and node
+        # properties (dict of column names and values, except the 'ID')
 
-        # for each node (row), yield a 3-tuple of node id (the 'ID' column),
-        # node label (hardcode to 'variant' for now), and node properties (dict
-        # of column names and values, except the 'ID')
-
-        for _, node in nodes.iterrows():
+        for _, node in self.data.iterrows():
             # if ID is '.', generate md5 hash from other columns
             if node["ID"] == ".":
                 node["ID"] = hashlib.md5(
                     "".join(
                         [
                             str(node[column])
-                            for column in nodes.columns
+                            for column in self.data.columns
                             if column != "ID"
                         ]
                     ).encode("utf-8")
@@ -169,12 +188,9 @@ class AllVariantsAdapter:
 
         logger.info("Generating edges.")
 
-        if not self.nodes:
-            raise ValueError("No nodes found. Please run get_nodes() first.")
-
-        for node in self.nodes:
+        for node in self.variants:
             if random.random() < probability:
-                other_node = random.choice(self.nodes)
+                other_node = random.choice(self.variants)
 
                 # generate random relationship id by choosing upper or lower letters and integers, length 10, and joining them
                 relationship_id = "".join(
