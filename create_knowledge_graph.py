@@ -1,10 +1,10 @@
 from biocypher import BioCypher
-from template_package.adapters.example_adapter import (
-    ExampleAdapter,
-    ExampleAdapterNodeType,
-    ExampleAdapterEdgeType,
-    ExampleAdapterProteinField,
-    ExampleAdapterDiseaseField,
+from decider_genetics.adapters.all_variants_adapter import (
+    AllVariantsAdapter,
+    AllVariantsAdapterNodeType,
+    AllVariantsAdapterEdgeType,
+    AllVariantsAdapterPatientField,
+    AllVariantsAdapterVariantField,
 )
 
 # Instantiate the BioCypher interface
@@ -17,44 +17,44 @@ bc = BioCypher(
 # Choose node types to include in the knowledge graph.
 # These are defined in the adapter (`adapter.py`).
 node_types = [
-    ExampleAdapterNodeType.PROTEIN,
-    ExampleAdapterNodeType.DISEASE,
+    AllVariantsAdapterNodeType.PATIENT,
+    AllVariantsAdapterNodeType.VARIANT,
 ]
 
 # Choose protein adapter fields to include in the knowledge graph.
 # These are defined in the adapter (`adapter.py`).
 node_fields = [
-    # Proteins
-    ExampleAdapterProteinField.ID,
-    ExampleAdapterProteinField.SEQUENCE,
-    ExampleAdapterProteinField.DESCRIPTION,
-    ExampleAdapterProteinField.TAXON,
-    # Diseases
-    ExampleAdapterDiseaseField.ID,
-    ExampleAdapterDiseaseField.NAME,
-    ExampleAdapterDiseaseField.DESCRIPTION,
+    # Patients
+    AllVariantsAdapterPatientField.ID,
+    # Variants
+    AllVariantsAdapterVariantField.ID,
+    AllVariantsAdapterVariantField.CHROMOSOME,
+    AllVariantsAdapterVariantField.POSITION,
+    AllVariantsAdapterVariantField.REF,
+    AllVariantsAdapterVariantField.ALT,
+    AllVariantsAdapterVariantField.GENE,
+    AllVariantsAdapterVariantField.COSMIC_ID,
+    AllVariantsAdapterVariantField.TRUNCAL,
 ]
 
 edge_types = [
-    ExampleAdapterEdgeType.PROTEIN_PROTEIN_INTERACTION,
-    ExampleAdapterEdgeType.PROTEIN_DISEASE_ASSOCIATION,
+    AllVariantsAdapterEdgeType.PATIENT_VARIANT_ASSOCIATION,
 ]
 
 # Create a protein adapter instance
-adapter = ExampleAdapter(
+adapter = AllVariantsAdapter(
     node_types=node_types,
     node_fields=node_fields,
     edge_types=edge_types,
-    # we can leave edge fields empty, defaulting to all fields in the adapter
 )
 
 
 # Create a knowledge graph from the adapter
 bc.write_nodes(adapter.get_nodes())
-bc.write_edges(adapter.get_edges())
+# bc.add(adapter.get_edges())
 
 # Write admin import statement
-bc.write_import_call()
+data = bc.to_df()
 
 # Print summary
 bc.summary()

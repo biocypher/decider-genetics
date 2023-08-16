@@ -1,21 +1,15 @@
 # add your desired knowledge graph components here
 
-protein:
+sequence variant:
     represented_as: node
-    preferred_id: uniprot
-    label_in_input: uniprot_protein
+    label_in_input: variant
 
-disease:
+patient:
+    is_a: individual organism
     represented_as: node
-    preferred_id: doid
-    label_in_input: do_disease
+    label_in_input: patient
     
-protein interaction:
-    is_a: pairwise molecular interaction
-    represented_as: edge
-    label_in_input: protein_protein_interaction
-
-protein to disease association:
+patient to variant association:
     is_a: association
     represented_as: edge
-    label_in_input: protein_disease_association
+    label_in_input: patient_has_variant

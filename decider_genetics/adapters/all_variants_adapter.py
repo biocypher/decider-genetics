@@ -1,5 +1,7 @@
+import hashlib
 import random
 import string
+import pandas as pd
 from enum import Enum, auto
 from itertools import chain
 from typing import Optional
@@ -8,67 +10,89 @@ from biocypher._logger import logger
 logger.debug(f"Loading module {__name__}.")
 
 
-class ExampleAdapterNodeType(Enum):
+class AllVariantsAdapterNodeType(Enum):
     """
     Define types of nodes the adapter can provide.
     """
 
-    PROTEIN = auto()
-    DISEASE = auto()
+    PATIENT = auto()
+    VARIANT = auto()
 
 
-class ExampleAdapterProteinField(Enum):
+class AllVariantsAdapterPatientField(Enum):
     """
-    Define possible fields the adapter can provide for proteins.
-    """
-
-    ID = "id"
-    SEQUENCE = "sequence"
-    DESCRIPTION = "description"
-    TAXON = "taxon"
-
-
-class ExampleAdapterDiseaseField(Enum):
-    """
-    Define possible fields the adapter can provide for diseases.
+    Define possible fields the adapter can provide for patients.
     """
 
     ID = "id"
-    NAME = "name"
-    DESCRIPTION = "description"
 
 
-class ExampleAdapterEdgeType(Enum):
+class AllVariantsAdapterVariantField(Enum):
+    """
+    Define possible fields the adapter can provide for variants.
+    """
+
+    ID = "ID"
+    CHROMOSOME = "CHROM"
+    POSITION = "POS"
+    REF = "REF"
+    ALT = "ALT"
+    FILTER = "FILTER"
+    CYTOBAND = "cytoBand"
+    FUNCTION = "Func.MANE"
+    GENE = "Gene.MANE"
+    GENE_DETAIL = "GeneDetail.MANE"
+    EXONIC_FUNCTION = "ExonicFunc.MANE"
+    AA_CHANGE = "AAChange.MANE"
+    FUNCTION_REF = "Func.refGene"
+    GENE_REF = "Gene.refGene"
+    GENE_DETAIL_REF = "GeneDetail.refGene"
+    EXONIC_FUNCTION_REF = "ExonicFunc.refGene"
+    AA_CHANGE_REF = "AAChange.refGene"
+    GENOMIC_SUPER_DUPS = "genomicSuperDups"
+    DBSC_SNV_ADA_SCORE = "dbscSNV_ADA_SCORE"
+    DBSC_SNV_RF_SCORE = "dbscSNV_RF_SCORE"
+    COSMIC_ID = "COSMIC_ID"
+    COSMIC_OCCURENCE = "COSMIC_OCCURRENCE"
+    COSMIC_TOTAL_OCCURENCE = "COSMIC_TOTAL_OCC"
+    COSMIC_CONF_SOMATIC = "COSMIC_CONF_SOMA"
+    CLNSIG = "CLNSIG"
+    CLNSIGCONF = "CLNSIGCONF"
+    CLNDN = "CLNDN"
+    CLNREVSTAT = "CLNREVSTAT"
+    CLNALLELEID = "CLNALLELEID"
+    CLNDISDB = "CLNDISDB"
+    INTERPRO_DOMAIN = "Interpro_domain"
+    REGULOME_DB = "regulomeDB"
+    CADD_RAW = "CADD_raw"
+    CADD_PHRED = "CADD_phred"
+    THOUSAND_GENOMES_ALL = "1000G_ALL"
+    THOUSAND_GENOMES_EUR = "1000G_EUR"
+    GNOMAD_GENOME_ALL = "gnomAD_genome_ALL"
+    GNOMAD_GENOME_NFE = "gnomAD_genome_NFE"
+    GNOMAD_GENOME_FIN = "gnomAD_genome_FIN"
+    GNOMAD_GENOME_MAX = "gnomAD_genome_max"
+    GNOMAD_EXOME_NC_ALL = "gnomAD_exome_nc_ALL"
+    GNOMAD_EXOME_NC_NFE = "gnomAD_exome_nc_NFE"
+    GNOMAD_EXOME_NC_NFE_SWE = "gnomAD_exome_nc_NFE_SWE"
+    GNOMAD_EXOME_NC_NC_FIN = "gnomAD_exome_nc_FIN"
+    GNOMAD_EXOME_NC_MAX = "gnomAD_exome_nc_max"
+    TRUNCAL = "Truncal"
+    READ_COUNTS = "readCounts"
+    SAMPLES = "samples"
+
+
+class AllVariantsAdapterEdgeType(Enum):
     """
     Enum for the types of the protein adapter.
     """
 
-    PROTEIN_PROTEIN_INTERACTION = "protein_protein_interaction"
-    PROTEIN_DISEASE_ASSOCIATION = "protein_disease_association"
+    PATIENT_VARIANT_ASSOCIATION = auto()
 
 
-class ExampleAdapterProteinProteinEdgeField(Enum):
+class AllVariantsAdapter:
     """
-    Define possible fields the adapter can provide for protein-protein edges.
-    """
-
-    INTERACTION_TYPE = "interaction_type"
-    INTERACTION_SOURCE = "interaction_source"
-
-
-class ExampleAdapterProteinDiseaseEdgeField(Enum):
-    """
-    Define possible fields the adapter can provide for protein-disease edges.
-    """
-
-    ASSOCIATION_TYPE = "association_type"
-    ASSOCIATION_SOURCE = "association_source"
-
-
-class ExampleAdapter:
-    """
-    Example BioCypher adapter. Generates nodes and edges for creating a
-    knowledge graph.
+    Generates patient and variant nodes and edges between them.
 
     Args:
         node_types: List of node types to include in the result.
@@ -96,22 +120,43 @@ class ExampleAdapter:
 
         logger.info("Generating nodes.")
 
-        self.nodes = []
+        # read from csv 'data/all_variants.sampled.csv'
+        nodes = pd.read_csv(
+            "data/all_variants.sampled.csv", sep="\t", header=0
+        )
 
-        if ExampleAdapterNodeType.PROTEIN in self.node_types:
+        # one row is one variant node, first select the columns given by the
+        # node_fields parameter
+        nodes = nodes[
             [
-                self.nodes.append(Protein(fields=self.node_fields))
-                for _ in range(100)
+                field.value
+                for field in self.node_fields
+                if field.value in nodes.columns
             ]
+        ]
 
-        if ExampleAdapterNodeType.DISEASE in self.node_types:
-            [
-                self.nodes.append(Disease(fields=self.node_fields))
-                for _ in range(100)
-            ]
+        # for each node (row), yield a 3-tuple of node id (the 'ID' column),
+        # node label (hardcode to 'variant' for now), and node properties (dict
+        # of column names and values, except the 'ID')
 
-        for node in self.nodes:
-            yield (node.get_id(), node.get_label(), node.get_properties())
+        for _, node in nodes.iterrows():
+            # if ID is '.', generate md5 hash from other columns
+            if node["ID"] == ".":
+                node["ID"] = hashlib.md5(
+                    "".join(
+                        [
+                            str(node[column])
+                            for column in nodes.columns
+                            if column != "ID"
+                        ]
+                    ).encode("utf-8")
+                ).hexdigest()
+
+            yield (
+                node["ID"],
+                "variant",
+                node.drop("ID").to_dict(),
+            )
 
     def get_edges(self, probability: float = 0.3):
         """
@@ -140,19 +185,19 @@ class ExampleAdapter:
                 # determine type of edge from other_node type
                 if (
                     isinstance(other_node, Protein)
-                    and ExampleAdapterEdgeType.PROTEIN_PROTEIN_INTERACTION
+                    and AllVariantsAdapterEdgeType.PROTEIN_PROTEIN_INTERACTION
                     in self.edge_types
                 ):
                     edge_type = (
-                        ExampleAdapterEdgeType.PROTEIN_PROTEIN_INTERACTION.value
+                        AllVariantsAdapterEdgeType.PROTEIN_PROTEIN_INTERACTION.value
                     )
                 elif (
                     isinstance(other_node, Disease)
-                    and ExampleAdapterEdgeType.PROTEIN_DISEASE_ASSOCIATION
+                    and AllVariantsAdapterEdgeType.PROTEIN_DISEASE_ASSOCIATION
                     in self.edge_types
                 ):
                     edge_type = (
-                        ExampleAdapterEdgeType.PROTEIN_DISEASE_ASSOCIATION.value
+                        AllVariantsAdapterEdgeType.PROTEIN_DISEASE_ASSOCIATION.value
                     )
                 else:
                     continue
@@ -177,7 +222,7 @@ class ExampleAdapter:
         if node_types:
             self.node_types = node_types
         else:
-            self.node_types = [type for type in ExampleAdapterNodeType]
+            self.node_types = [type for type in AllVariantsAdapterNodeType]
 
         if node_fields:
             self.node_fields = node_fields
@@ -185,15 +230,15 @@ class ExampleAdapter:
             self.node_fields = [
                 field
                 for field in chain(
-                    ExampleAdapterProteinField,
-                    ExampleAdapterDiseaseField,
+                    AllVariantsAdapterPatientField,
+                    AllVariantsAdapterVariantField,
                 )
             ]
 
         if edge_types:
             self.edge_types = edge_types
         else:
-            self.edge_types = [type for type in ExampleAdapterEdgeType]
+            self.edge_types = [type for type in AllVariantsAdapterEdgeType]
 
         if edge_fields:
             self.edge_fields = edge_fields
@@ -257,7 +302,7 @@ class Protein(Node):
         ## random amino acid sequence
         if (
             self.fields is not None
-            and ExampleAdapterProteinField.SEQUENCE in self.fields
+            and AllVariantsAdapterPatientField.SEQUENCE in self.fields
         ):
 
             # random int between 50 and 250
@@ -270,7 +315,7 @@ class Protein(Node):
         ## random description
         if (
             self.fields is not None
-            and ExampleAdapterProteinField.DESCRIPTION in self.fields
+            and AllVariantsAdapterPatientField.DESCRIPTION in self.fields
         ):
             properties["description"] = " ".join(
                 [random.choice(string.ascii_lowercase) for _ in range(10)],
@@ -279,7 +324,7 @@ class Protein(Node):
         ## taxon
         if (
             self.fields is not None
-            and ExampleAdapterProteinField.TAXON in self.fields
+            and AllVariantsAdapterPatientField.TAXON in self.fields
         ):
             properties["taxon"] = "9606"
 
@@ -311,7 +356,7 @@ class Disease(Node):
         ## random name
         if (
             self.fields is not None
-            and ExampleAdapterDiseaseField.NAME in self.fields
+            and AllVariantsAdapterVariantField.NAME in self.fields
         ):
             properties["name"] = " ".join(
                 [random.choice(string.ascii_lowercase) for _ in range(10)],
@@ -320,7 +365,7 @@ class Disease(Node):
         ## random description
         if (
             self.fields is not None
-            and ExampleAdapterDiseaseField.DESCRIPTION in self.fields
+            and AllVariantsAdapterVariantField.DESCRIPTION in self.fields
         ):
             properties["description"] = " ".join(
                 [random.choice(string.ascii_lowercase) for _ in range(10)],
