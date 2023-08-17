@@ -4,6 +4,7 @@ from decider_genetics.adapters.all_variants_adapter import (
     AllVariantsAdapterNodeType,
     AllVariantsAdapterEdgeType,
     AllVariantsAdapterPatientField,
+    AllVariantsAdapterSampleField,
     AllVariantsAdapterVariantField,
 )
 
@@ -18,6 +19,7 @@ bc = BioCypher(
 # These are defined in the adapter (`adapter.py`).
 node_types = [
     AllVariantsAdapterNodeType.PATIENT,
+    AllVariantsAdapterNodeType.SAMPLE,
     AllVariantsAdapterNodeType.VARIANT,
 ]
 
@@ -26,6 +28,10 @@ node_types = [
 node_fields = [
     # Patients
     AllVariantsAdapterPatientField.ID,
+    AllVariantsAdapterPatientField.SAMPLES,
+    # Samples
+    AllVariantsAdapterSampleField.ID,
+    AllVariantsAdapterSampleField.READ_COUNTS,
     # Variants
     AllVariantsAdapterVariantField.ID,
     AllVariantsAdapterVariantField.CHROMOSOME,

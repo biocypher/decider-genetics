@@ -16,6 +16,7 @@ class AllVariantsAdapterNodeType(Enum):
     """
 
     PATIENT = auto()
+    SAMPLE = auto()
     VARIANT = auto()
 
 
@@ -25,6 +26,16 @@ class AllVariantsAdapterPatientField(Enum):
     """
 
     ID = "patient"
+    SAMPLES = "samples"
+
+
+class AllVariantsAdapterSampleField(Enum):
+    """
+    Define possible fields the adapter can provide for samples.
+    """
+
+    ID = "sample"
+    READ_COUNTS = "readCounts"
 
 
 class AllVariantsAdapterVariantField(Enum):
@@ -78,13 +89,11 @@ class AllVariantsAdapterVariantField(Enum):
     GNOMAD_EXOME_NC_NC_FIN = "gnomAD_exome_nc_FIN"
     GNOMAD_EXOME_NC_MAX = "gnomAD_exome_nc_max"
     TRUNCAL = "Truncal"
-    READ_COUNTS = "readCounts"
-    SAMPLES = "samples"
 
 
 class AllVariantsAdapterEdgeType(Enum):
     """
-    Enum for the types of the protein adapter.
+    Enum for the edge types of the adapter.
     """
 
     PATIENT_VARIANT_ASSOCIATION = auto()
@@ -133,6 +142,22 @@ class AllVariantsAdapter:
             ]
         ]
 
+        # break up the 'samples' column into one row per sample, rename the
+        # column to 'sample'; at the same time, the readCounts column needs to
+        # be split into one row per sample as well
+        self.variants = self.variants.assign(
+            samples=self.variants["samples"].str.split(";")
+        ).explode("samples")
+        self.variants = self.variants.assign(
+            readCounts=self.variants["readCounts"].str.split(";")
+        ).explode("readCounts")
+        self.variants = self.variants.rename(
+            columns={"samples": "sample"}
+        ).reset_index(drop=True)
+
+        # remove duplicate rows
+        self.variants = self.variants.drop_duplicates()
+
         # if ID is '.', generate md5 hash from other columns
         self.variants["ID"] = self.variants.apply(
             lambda row: hashlib.md5(
@@ -149,10 +174,29 @@ class AllVariantsAdapter:
             axis=1,
         )
 
-        # PATIENTS: select the PATIENT.ID column and drop duplicates
+        # generate md5 hash from all columns into new column 'EDGE_ID'
+        self.variants["EDGE_ID"] = self.variants.apply(
+            lambda row: hashlib.md5(
+                "".join(
+                    [
+                        str(row[column])
+                        for column in self.variants.columns
+                        if column != "EDGE_ID"
+                    ]
+                ).encode("utf-8")
+            ).hexdigest(),
+            axis=1,
+        )
+
+        # PATIENTS and SAMPLES: select the PATIENT.ID and SAMPLE.ID column and
+        # drop duplicates
+
         if AllVariantsAdapterNodeType.PATIENT in self.node_types:
-            self.patients = data[
-                [AllVariantsAdapterPatientField.ID.value]
+            self.patients = self.variants[
+                [
+                    AllVariantsAdapterPatientField.ID.value,
+                    AllVariantsAdapterSampleField.ID.value,
+                ]
             ].drop_duplicates()
 
     def get_nodes(self):
@@ -163,10 +207,33 @@ class AllVariantsAdapter:
 
         logger.info("Generating nodes.")
 
-        for _, patient in self.patients.iterrows():
+        # get unique patients as list
+        patients = (
+            self.patients[[AllVariantsAdapterPatientField.ID.value]]
+            .drop_duplicates()[AllVariantsAdapterPatientField.ID.value]
+            .tolist()
+        )
+
+        # get unique samples
+        samples = (
+            self.variants[[AllVariantsAdapterSampleField.ID.value]]
+            .drop_duplicates()[AllVariantsAdapterSampleField.ID.value]
+            .tolist()
+        )
+
+        # yield tuples for patients
+        for patient in patients:
             yield (
-                patient[AllVariantsAdapterPatientField.ID.value],
+                patient,
                 "patient",
+                {},
+            )
+
+        # yield tuples for samples
+        for sample in samples:
+            yield (
+                sample,
+                "sample",
                 {},
             )
 
@@ -174,7 +241,18 @@ class AllVariantsAdapter:
         # column), node label (hardcode to 'variant' for now), and node
         # properties (dict of column names and values, except the 'ID')
 
-        for _, node in self.variants.iterrows():
+        # first remove patient, sample, read counts and edge id, and drop
+        # duplicates
+        unique_variants = self.variants.drop(
+            columns=[
+                AllVariantsAdapterPatientField.ID.value,
+                AllVariantsAdapterSampleField.ID.value,
+                AllVariantsAdapterSampleField.READ_COUNTS.value,
+                "EDGE_ID",
+            ]
+        ).drop_duplicates()
+
+        for _, node in unique_variants.iterrows():
             yield (
                 node["ID"],
                 "variant",
@@ -189,18 +267,35 @@ class AllVariantsAdapter:
 
         logger.info("Generating edges.")
 
-        # yield 5-tuple of edge id (hash of patient and variant ids), source
-        # node id, target node id, edge label (hardcode to 'patient_has_variant'
+        # PATIENT SAMPLE
+        # yield 5-tuple of edge id (hash of patient and sample ids), source
+        # node id, target node id, edge label (hardcode to 'patient_has_sample'
         # for now), and edge properties (empty dict for now)
-        for _, row in self.variants.iterrows():
+        for _, row in self.patients.iterrows():
             p_id = row[AllVariantsAdapterPatientField.ID.value]
-            v_id = row[AllVariantsAdapterVariantField.ID.value]
-            _id = hashlib.md5((p_id + v_id).encode("utf-8")).hexdigest()
+            s_id = row[AllVariantsAdapterSampleField.ID.value]
+            _id = hashlib.md5((p_id + s_id).encode("utf-8")).hexdigest()
             yield (
                 _id,
                 p_id,
+                s_id,
+                "patient_has_sample",
+                {},
+            )
+
+        # SAMPLE VARIANT
+        # yield 5-tuple of edge id, source node id, target node id, edge label
+        # (hardcode to 'sample_has_variant' for now), and edge properties (empty
+        # dict for now)
+        for _, row in self.variants.iterrows():
+            _id = row["EDGE_ID"]
+            s_id = row[AllVariantsAdapterSampleField.ID.value]
+            v_id = row[AllVariantsAdapterVariantField.ID.value]
+            yield (
+                _id,
+                s_id,
                 v_id,
-                "patient_has_variant",
+                "sample_has_variant",
                 {},
             )
 

@@ -8,8 +8,18 @@ patient:
     is_a: individual organism
     represented_as: node
     label_in_input: patient
+
+sample:
+    synonym_for: material sample
+    represented_as: node
+    label_in_input: sample
     
-patient to variant association:
+patient to sample association:
     is_a: association
     represented_as: edge
-    label_in_input: patient_has_variant
+    label_in_input: patient_has_sample
+
+sample to variant association:
+    is_a: association
+    represented_as: edge
+    label_in_input: sample_has_variant
