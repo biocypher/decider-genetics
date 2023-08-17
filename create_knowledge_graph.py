@@ -41,8 +41,14 @@ variant_node_fields = [
     AllVariantsAdapterVariantField.REF,
     AllVariantsAdapterVariantField.ALT,
     AllVariantsAdapterVariantField.GENE,
-    AllVariantsAdapterVariantField.COSMIC_ID,
-    AllVariantsAdapterVariantField.TRUNCAL,
+    AllVariantsAdapterVariantField.CADD_PHRED,
+    AllVariantsAdapterVariantField.FUNCTION,
+    AllVariantsAdapterVariantField.EXONIC_FUNCTION,
+    AllVariantsAdapterVariantField.AA_CHANGE,
+    AllVariantsAdapterVariantField.COSMIC_TOTAL_OCCURENCE,
+    AllVariantsAdapterVariantField.CLNSIG,
+    AllVariantsAdapterVariantField.CLNREVSTAT,
+    AllVariantsAdapterVariantField.GNOMAD_GENOME_MAX,
 ]
 
 variant_edge_types = [

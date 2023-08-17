@@ -161,6 +161,15 @@ class AllVariantsAdapter:
         # remove duplicate rows
         self.variants = self.variants.drop_duplicates()
 
+        # define dropped columns that should not contribute to hash
+        self._drop_columns = [
+            AllVariantsAdapterPatientField.ID.value,
+            AllVariantsAdapterSampleField.ID.value,
+            AllVariantsAdapterSampleField.READ_COUNTS.value,
+            "Gene",
+            "EDGE_ID",
+        ]
+
         # if ID is '.', generate md5 hash from other columns
         self.variants["ID"] = self.variants.apply(
             lambda row: hashlib.md5(
@@ -168,7 +177,7 @@ class AllVariantsAdapter:
                     [
                         str(row[column])
                         for column in self.variants.columns
-                        if column != "ID"
+                        if column not in self._drop_columns
                     ]
                 ).encode("utf-8")
             ).hexdigest()
@@ -246,16 +255,9 @@ class AllVariantsAdapter:
         # column), node label (hardcode to 'variant' for now), and node
         # properties (dict of column names and values, except the 'ID')
 
-        # first remove patient, sample, read counts, gene (expanded), and edge
-        # id, and drop duplicates
+        # first remove columns in _drop_columns and drop duplicates
         unique_variants = self.variants.drop(
-            columns=[
-                AllVariantsAdapterPatientField.ID.value,
-                AllVariantsAdapterSampleField.ID.value,
-                AllVariantsAdapterSampleField.READ_COUNTS.value,
-                "Gene",
-                "EDGE_ID",
-            ]
+            self._drop_columns, axis=1
         ).drop_duplicates()
 
         for _, node in unique_variants.iterrows():
