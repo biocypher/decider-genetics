@@ -1,8 +1,5 @@
 # add your desired knowledge graph components here
 
-sequence variant:
-    represented_as: node
-    label_in_input: variant
 
 patient:
     is_a: individual organism
@@ -13,6 +10,14 @@ sample:
     synonym_for: material sample
     represented_as: node
     label_in_input: sample
+
+gene:
+    represented_as: node
+    label_in_input: gene
+
+sequence variant:
+    represented_as: node
+    label_in_input: variant
     
 patient to sample association:
     is_a: association
@@ -23,3 +28,8 @@ sample to variant association:
     is_a: association
     represented_as: edge
     label_in_input: sample_has_variant
+
+sample to gene copy number alteration:
+    is_a: association
+    represented_as: edge
+    label_in_input: copy_number_alteration

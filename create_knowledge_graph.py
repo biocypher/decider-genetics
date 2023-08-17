@@ -7,25 +7,27 @@ from decider_genetics.adapters.all_variants_adapter import (
     AllVariantsAdapterSampleField,
     AllVariantsAdapterVariantField,
 )
+from decider_genetics.adapters.cn_genes_adapter import (
+    CnGenesAdapter,
+    CnGenesAdapterNodeType,
+    CnGenesAdapterEdgeType,
+    CnGenesAdapterSampleField,
+    CnGenesAdapterGeneField,
+    CnGenesAdapterEdgeField,
+)
 
-# Instantiate the BioCypher interface
-# You can use `config/biocypher_config.yaml` to configure the framework or
-# supply settings via parameters below
 bc = BioCypher(
     biocypher_config_path="config/biocypher_config.yaml",
 )
 
-# Choose node types to include in the knowledge graph.
-# These are defined in the adapter (`adapter.py`).
-node_types = [
+# VARIANTS from all_variants.csv
+variant_node_types = [
     AllVariantsAdapterNodeType.PATIENT,
     AllVariantsAdapterNodeType.SAMPLE,
     AllVariantsAdapterNodeType.VARIANT,
 ]
 
-# Choose protein adapter fields to include in the knowledge graph.
-# These are defined in the adapter (`adapter.py`).
-node_fields = [
+variant_node_fields = [
     # Patients
     AllVariantsAdapterPatientField.ID,
     AllVariantsAdapterPatientField.SAMPLES,
@@ -43,21 +45,64 @@ node_fields = [
     AllVariantsAdapterVariantField.TRUNCAL,
 ]
 
-edge_types = [
+variant_edge_types = [
     AllVariantsAdapterEdgeType.PATIENT_VARIANT_ASSOCIATION,
 ]
 
-# Create a protein adapter instance
-adapter = AllVariantsAdapter(
-    node_types=node_types,
-    node_fields=node_fields,
-    edge_types=edge_types,
+variant_adapter = AllVariantsAdapter(
+    node_types=variant_node_types,
+    node_fields=variant_node_fields,
+    edge_types=variant_edge_types,
 )
 
+# COPY NUMBERS from CnCombinedGenes.csv
+cn_node_types = [
+    CnGenesAdapterNodeType.SAMPLE,
+    CnGenesAdapterNodeType.GENE,
+]
+
+cn_node_fields = [
+    # Samples
+    CnGenesAdapterSampleField.ID,
+    # Genes
+    CnGenesAdapterGeneField.ENSEMBL_ID,
+    CnGenesAdapterGeneField.NAME,
+    CnGenesAdapterGeneField.CHR,
+    CnGenesAdapterGeneField.START,
+    CnGenesAdapterGeneField.END,
+    CnGenesAdapterGeneField.STRAND,
+    CnGenesAdapterGeneField.BAND,
+    CnGenesAdapterGeneField.TYPE,
+]
+
+cn_edge_types = [
+    CnGenesAdapterEdgeType.SAMPLE_GENE_ASSOCIATION,
+]
+
+cn_edge_fields = [
+    CnGenesAdapterEdgeField.BREAKS_IN_GENE,
+    CnGenesAdapterEdgeField.N_MAJOR,
+    CnGenesAdapterEdgeField.N_MINOR,
+    CnGenesAdapterEdgeField.PURIFIED_LOG_R,
+    CnGenesAdapterEdgeField.MIN_PURIFIED_LOG_R,
+    CnGenesAdapterEdgeField.MAX_PURIFIED_LOG_R,
+    CnGenesAdapterEdgeField.PURIFIED_BAF,
+    CnGenesAdapterEdgeField.PURIFIED_LOH,
+]
+
+cn_adapter = CnGenesAdapter(
+    node_types=cn_node_types,
+    node_fields=cn_node_fields,
+    edge_types=cn_edge_types,
+    edge_fields=cn_edge_fields,
+)
 
 # Create a knowledge graph from the adapter
-bc.write_nodes(adapter.get_nodes())
-bc.write_edges(adapter.get_edges())
+bc.write_nodes(variant_adapter.get_nodes())
+bc.write_nodes(cn_adapter.get_nodes())
+
+bc.write_edges(variant_adapter.get_edges())
+bc.write_edges(cn_adapter.get_edges())
 
 # Write admin import statement
 data = bc.write_import_call()
