@@ -46,7 +46,9 @@ variant_node_fields = [
 ]
 
 variant_edge_types = [
-    AllVariantsAdapterEdgeType.PATIENT_VARIANT_ASSOCIATION,
+    AllVariantsAdapterEdgeType.PATIENT_SAMPLE_ASSOCIATION,
+    AllVariantsAdapterEdgeType.SAMPLE_VARIANT_ASSOCIATION,
+    AllVariantsAdapterEdgeType.VARIANT_GENE_ASSOCIATION,
 ]
 
 variant_adapter = AllVariantsAdapter(

@@ -29,6 +29,11 @@ sample to variant association:
     represented_as: edge
     label_in_input: sample_has_variant
 
+variant to gene association:
+    is_a: association
+    represented_as: edge
+    label_in_input: variant_in_gene
+
 sample to gene copy number alteration:
     is_a: association
     represented_as: edge
