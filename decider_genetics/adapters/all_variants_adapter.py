@@ -1,6 +1,4 @@
 import hashlib
-import random
-import string
 import pandas as pd
 from enum import Enum, auto
 from itertools import chain
@@ -317,19 +315,23 @@ class AllVariantsAdapter:
         unique_variant_gene = self.variants[
             [
                 AllVariantsAdapterVariantField.ID.value,
-                AllVariantsAdapterVariantField.GENE.value,
+                "Gene",  # expanded above
             ]
         ].drop_duplicates()
+
+        # remove all 'NONE' genes
+        unique_variant_gene = unique_variant_gene[
+            unique_variant_gene["Gene"] != "NONE"
+        ]
 
         for _, row in unique_variant_gene.iterrows():
             _id = hashlib.md5(
                 (
-                    row[AllVariantsAdapterVariantField.ID.value]
-                    + row[AllVariantsAdapterVariantField.GENE.value]
+                    row[AllVariantsAdapterVariantField.ID.value] + row["Gene"]
                 ).encode("utf-8")
             ).hexdigest()
             v_id = row[AllVariantsAdapterVariantField.ID.value]
-            g_id = row[AllVariantsAdapterVariantField.GENE.value]
+            g_id = f"hgnc:{row['Gene']}"
             yield (
                 _id,
                 v_id,

@@ -1,4 +1,5 @@
 import hashlib
+import math
 import random
 import string
 import pandas as pd
@@ -166,14 +167,16 @@ class CnGenesAdapter:
 
         logger.info("Generating nodes.")
 
-        # GENES: for each node (row), yield a 3-tuple of node id (the 'ID'
-        # column), node label (hardcode to 'gene' for now), and node properties
-        # (dict of column names and values, except the 'ID')
+        # GENES: for each node (row), yield a 3-tuple of node id (the 'NAME'
+        # column with 'hgnc:' prefix), node label (hardcode to 'gene' for now),
+        # and node properties (dict of column names and values, except the
+        # 'NAME')
+
         for _, node in self.genes.iterrows():
             yield (
-                node["ID"],
+                f"hgnc:{node[CnGenesAdapterGeneField.NAME.value]}",
                 "gene",
-                node.drop("ID").to_dict(),
+                node.drop(CnGenesAdapterGeneField.NAME.value).to_dict(),
             )
 
         # SAMPLES: should already be created by the all_variants adapter
@@ -191,18 +194,27 @@ class CnGenesAdapter:
         # (all columns except the source and target node ids)
 
         for _, row in self.variants.iterrows():
+            _props = row.drop(
+                [
+                    "EDGE_ID",
+                    CnGenesAdapterSampleField.ID.value,
+                    CnGenesAdapterGeneField.NAME.value,
+                ]
+            ).to_dict()
+
+            # replace 'nan' with 'NaN' in N_MAJOR and N_MINOR; otherwise, Neo4j
+            # will throw an error (can't deal with 'nan')
+            if math.isnan(_props[CnGenesAdapterEdgeField.N_MAJOR.value]):
+                _props[CnGenesAdapterEdgeField.N_MAJOR.value] = "NaN"
+            if math.isnan(_props[CnGenesAdapterEdgeField.N_MINOR.value]):
+                _props[CnGenesAdapterEdgeField.N_MINOR.value] = "NaN"
+
             yield (
                 row["EDGE_ID"],
                 row[CnGenesAdapterSampleField.ID.value],
-                row[CnGenesAdapterGeneField.NAME.value],
+                f"hgnc:{row[CnGenesAdapterGeneField.NAME.value]}",
                 "copy_number_alteration",
-                row.drop(
-                    [
-                        "EDGE_ID",
-                        CnGenesAdapterSampleField.ID.value,
-                        CnGenesAdapterGeneField.NAME.value,
-                    ]
-                ).to_dict(),
+                _props,
             )
 
     def _set_types_and_fields(

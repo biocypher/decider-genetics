@@ -13,6 +13,7 @@ sample:
 
 gene:
     represented_as: node
+    preferred_id: hgnc
     label_in_input: gene
 
 sequence variant:
