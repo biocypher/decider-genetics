@@ -167,7 +167,6 @@ class AllVariantsAdapter:
             AllVariantsAdapterSampleField.ID.value,
             AllVariantsAdapterSampleField.READ_COUNTS.value,
             "Gene",
-            "EDGE_ID",
         ]
 
         # if ID is '.', generate md5 hash from other columns
@@ -186,23 +185,8 @@ class AllVariantsAdapter:
             axis=1,
         )
 
-        # generate md5 hash from all columns into new column 'EDGE_ID'
-        self.variants["EDGE_ID"] = self.variants.apply(
-            lambda row: hashlib.md5(
-                "".join(
-                    [
-                        str(row[column])
-                        for column in self.variants.columns
-                        if column != "EDGE_ID"
-                    ]
-                ).encode("utf-8")
-            ).hexdigest(),
-            axis=1,
-        )
-
         # PATIENTS and SAMPLES: select the PATIENT.ID and SAMPLE.ID column and
         # drop duplicates
-
         if AllVariantsAdapterNodeType.PATIENT in self.node_types:
             self.patients = self.variants[
                 [
@@ -275,7 +259,7 @@ class AllVariantsAdapter:
 
         logger.info("Generating edges.")
 
-        # PATIENT SAMPLE
+        # PATIENT - SAMPLE
         # yield 5-tuple of edge id (hash of patient and sample ids), source
         # node id, target node id, edge label (hardcode to 'patient_has_sample'
         # for now), and edge properties (empty dict for now)
@@ -291,14 +275,14 @@ class AllVariantsAdapter:
                 {},
             )
 
-        # SAMPLE VARIANT
-        # yield 5-tuple of edge id, source node id, target node id, edge label
-        # (hardcode to 'sample_has_variant' for now), and edge properties (empty
-        # dict for now)
+        # SAMPLE - VARIANT
+        # yield 5-tuple of edge id (hash of sample and variant ids), source node
+        # id, target node id, edge label (hardcode to 'sample_has_variant' for
+        # now), and edge properties (empty dict for now)
         for _, row in self.variants.iterrows():
-            _id = row["EDGE_ID"]
             s_id = row[AllVariantsAdapterSampleField.ID.value]
             v_id = row[AllVariantsAdapterVariantField.ID.value]
+            _id = hashlib.md5((s_id + v_id).encode("utf-8")).hexdigest()
             yield (
                 _id,
                 s_id,
@@ -307,7 +291,7 @@ class AllVariantsAdapter:
                 {},
             )
 
-        # VARIANT GENE
+        # VARIANT - GENE
         # yield 5-tuple of edge id, source node id, target node id, edge label
         # (hardcode to 'variant_in_gene' for now), and edge properties (empty
         # dict for now)
@@ -327,13 +311,9 @@ class AllVariantsAdapter:
         ]
 
         for _, row in unique_variant_gene.iterrows():
-            _id = hashlib.md5(
-                (
-                    row[AllVariantsAdapterVariantField.ID.value] + row["Gene"]
-                ).encode("utf-8")
-            ).hexdigest()
             v_id = row[AllVariantsAdapterVariantField.ID.value]
             g_id = f"hgnc:{row['Gene']}"
+            _id = hashlib.md5((v_id + g_id).encode("utf-8")).hexdigest()
             yield (
                 _id,
                 v_id,
