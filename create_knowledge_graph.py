@@ -105,7 +105,7 @@ cn_adapter = CnGenesAdapter(
     edge_fields=cn_edge_fields,
 )
 
-# Create a knowledge graph from the adapter
+# Create a knowledge graph from the adapters
 bc.write_nodes(variant_adapter.get_nodes())
 bc.write_nodes(cn_adapter.get_nodes())
 
