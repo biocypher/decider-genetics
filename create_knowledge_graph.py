@@ -112,6 +112,8 @@ bc.write_nodes(cn_adapter.get_nodes())
 bc.write_edges(variant_adapter.get_edges())
 bc.write_edges(cn_adapter.get_edges())
 
+bc.write_schema_info(as_node=True)
+
 # Write admin import statement
 data = bc.write_import_call()
 
