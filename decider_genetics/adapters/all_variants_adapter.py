@@ -253,7 +253,7 @@ class AllVariantsAdapter:
                 node.drop("ID").to_dict(),
             )
 
-    def get_edges(self):
+    def get_edges(self, variant_via_sample: bool = False):
         """
         Returns a generator of edge tuples for edge types specified in the
         adapter constructor.
@@ -261,37 +261,55 @@ class AllVariantsAdapter:
 
         logger.info("Generating edges.")
 
-        # PATIENT - SAMPLE
-        # yield 5-tuple of edge id (hash of patient and sample ids), source
-        # node id, target node id, edge label (hardcode to 'patient_has_sample'
-        # for now), and edge properties (empty dict for now)
-        for _, row in self.patients.iterrows():
-            p_id = row[AllVariantsAdapterPatientField.ID.value]
-            s_id = row[AllVariantsAdapterSampleField.ID.value]
-            _id = hashlib.md5((p_id + s_id).encode("utf-8")).hexdigest()
-            yield (
-                _id,
-                p_id,
-                s_id,
-                "patient_has_sample",
-                {},
-            )
+        if variant_via_sample:
+            # PATIENT - SAMPLE
+            # yield 5-tuple of edge id (hash of patient and sample ids), source
+            # node id, target node id, edge label (hardcode to 'patient_has_sample'
+            # for now), and edge properties (empty dict for now)
+            for _, row in self.patients.iterrows():
+                p_id = row[AllVariantsAdapterPatientField.ID.value]
+                s_id = row[AllVariantsAdapterSampleField.ID.value]
+                _id = hashlib.md5((p_id + s_id).encode("utf-8")).hexdigest()
+                yield (
+                    _id,
+                    p_id,
+                    s_id,
+                    "patient_has_sample",
+                    {},
+                )
 
-        # SAMPLE - VARIANT
-        # yield 5-tuple of edge id (hash of sample and variant ids), source node
-        # id, target node id, edge label (hardcode to 'sample_has_variant' for
-        # now), and edge properties (empty dict for now)
-        for _, row in self.variants.iterrows():
-            s_id = row[AllVariantsAdapterSampleField.ID.value]
-            v_id = row[AllVariantsAdapterVariantField.ID.value]
-            _id = hashlib.md5((s_id + v_id).encode("utf-8")).hexdigest()
-            yield (
-                _id,
-                s_id,
-                v_id,
-                "sample_has_variant",
-                {},
-            )
+            # SAMPLE - VARIANT
+            # yield 5-tuple of edge id (hash of sample and variant ids), source node
+            # id, target node id, edge label (hardcode to 'sample_has_variant' for
+            # now), and edge properties (empty dict for now)
+            for _, row in self.variants.iterrows():
+                s_id = row[AllVariantsAdapterSampleField.ID.value]
+                v_id = row[AllVariantsAdapterVariantField.ID.value]
+                _id = hashlib.md5((s_id + v_id).encode("utf-8")).hexdigest()
+                yield (
+                    _id,
+                    s_id,
+                    v_id,
+                    "sample_has_variant",
+                    {},
+                )
+
+        else:
+            # PATIENT - VARIANT
+            # yield 5-tuple of edge id (hash of patient and variant ids), source node
+            # id, target node id, edge label (hardcode to 'patient_has_variant' for
+            # now), and edge properties (empty dict for now)
+            for _, row in self.variants.iterrows():
+                p_id = row[AllVariantsAdapterPatientField.ID.value]
+                v_id = row[AllVariantsAdapterVariantField.ID.value]
+                _id = hashlib.md5((p_id + v_id).encode("utf-8")).hexdigest()
+                yield (
+                    _id,
+                    p_id,
+                    v_id,
+                    "patient_has_variant",
+                    {},
+                )
 
         # VARIANT - GENE
         # yield 5-tuple of edge id, source node id, target node id, edge label
