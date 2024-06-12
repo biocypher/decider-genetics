@@ -1,9 +1,17 @@
 import random
 import pandas as pd
 
+bp_genes = pd.read_csv(
+    "data/oncodash files/GeneToBiologicalProcess-part000.csv",
+    sep=";",
+    names=["Gene.MANE", "BiologicalProcess", "Label"],
+)
+gene_list = bp_genes["Gene.MANE"].unique().tolist()
+gene_list = [gene.replace(":gene_hugo", "") for gene in gene_list]
+
 tissues = ["Per", "Ova", "Ome", "Asc", "Lum"]
 data_variants = pd.read_csv("data/filtered_variants.csv", sep="\t")
-gene_list = data_variants["Gene.MANE"].unique().tolist()
+
 synthetic_data_variants = []
 for patient in [
     "patient1",
@@ -32,7 +40,6 @@ synthetic_data_variants.to_csv(
 )
 
 data_cns = pd.read_csv("data/filtered_cns.csv", sep="\t")
-gene_list_cns = data_cns["Gene"].unique().tolist()
 synthetic_data_cns = []
 for patient in [
     "patient1",
@@ -41,7 +48,7 @@ for patient in [
     "patient4",
     "patient5",
 ]:
-    for gene in gene_list_cns:
+    for gene in gene_list:
         gene_data_cns = data_cns[data_cns["Gene"] == gene]
         random_patient_cns = gene_data_cns.sample(n=1, random_state=42)[
             "sample"
