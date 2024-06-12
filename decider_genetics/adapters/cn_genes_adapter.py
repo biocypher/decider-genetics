@@ -166,13 +166,14 @@ class CnGenesAdapter:
         logger.info("Generating nodes.")
 
         # GENES: for each node (row), yield a 3-tuple of node id (the 'NAME'
-        # column with 'hgnc:' prefix), node label (hardcode to 'gene' for now),
+        # column), node label (hardcode to 'gene' for now),
         # and node properties (dict of column names and values, except the
         # 'NAME')
 
         for _, node in self.genes.iterrows():
+            node["name"] = node[CnGenesAdapterGeneField.NAME.value]
             yield (
-                f"hgnc:{node[CnGenesAdapterGeneField.NAME.value]}",
+                f"{node[CnGenesAdapterGeneField.NAME.value]}",
                 "gene",
                 node.drop(CnGenesAdapterGeneField.NAME.value).to_dict(),
             )
@@ -210,7 +211,7 @@ class CnGenesAdapter:
             yield (
                 row["EDGE_ID"],
                 row[CnGenesAdapterSampleField.ID.value],
-                f"hgnc:{row[CnGenesAdapterGeneField.NAME.value]}",
+                f"{row[CnGenesAdapterGeneField.NAME.value]}",
                 "copy_number_alteration",
                 _props,
             )

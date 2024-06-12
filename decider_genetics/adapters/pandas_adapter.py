@@ -26,19 +26,19 @@ class PandasAdapter:
             "data/oncodash files/BiologicalProcess-part000.csv",
             sep=";",
             names=[
-                "ID",
+                "id",
                 "name",
                 "preferred_id",
                 "label",
             ],
         )
 
-        bio_process.loc[:, "ID"] = "bp:" + bio_process["ID"].str.replace(
+        bio_process.loc[:, "id"] = "bp:" + bio_process["id"].str.replace(
             ":biological_process", ""
         )
         bio_process.loc[:, "label"] = "biological_process"
         bio_process = bio_process.drop(["name", "preferred_id"], axis=1)
-        bio_process = bio_process[bio_process["ID"] != "bp:None"]
+        bio_process = bio_process[bio_process["id"] != "bp:None"]
 
         self.nodes = pd.concat([self.nodes, bio_process])
 
@@ -52,9 +52,9 @@ class PandasAdapter:
                 "Label",
             ],
         )
-        gene_to_process.loc[:, "Gene"] = "hgnc:" + gene_to_process[
-            "Gene"
-        ].str.replace(":gene_hugo", "")
+        gene_to_process.loc[:, "Gene"] = gene_to_process["Gene"].str.replace(
+            ":gene_hugo", ""
+        )
         gene_to_process.loc[:, "BiologicalProcess"] = "bp:" + gene_to_process[
             "BiologicalProcess"
         ].str.replace(":biological_process", "")
@@ -75,7 +75,7 @@ class PandasAdapter:
 
         for _, row in self.nodes.iterrows():
             yield (
-                row["ID"],
+                row["id"],
                 row["label"],
                 {},
             )

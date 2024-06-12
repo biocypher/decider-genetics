@@ -314,7 +314,7 @@ class AllVariantsAdapter:
 
         for _, row in unique_variant_gene.iterrows():
             v_id = row[AllVariantsAdapterVariantField.ID.value]
-            g_id = f"hgnc:{row['Gene']}"
+            g_id = f"{row['Gene']}"
             _id = hashlib.md5((v_id + g_id).encode("utf-8")).hexdigest()
             yield (
                 _id,
