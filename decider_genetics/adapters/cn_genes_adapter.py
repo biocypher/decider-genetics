@@ -104,10 +104,8 @@ class CnGenesAdapter:
         """
         logger.info("Loading data.")
 
-        # read from csv 'data/combinedCnGenes.sampled.csv'
-        self.data = pd.read_csv(
-            "data/combinedCnGenes.sampled.csv", sep="\t", header=0
-        )
+        # read from csv
+        self.data = pd.read_csv("data/synthetic_cns.csv", sep="\t", header=0)
 
         # each sample is connected to each gene by copy number; first, filter
         # to keep only the specified node fields and edge fields

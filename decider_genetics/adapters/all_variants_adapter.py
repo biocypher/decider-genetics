@@ -129,8 +129,8 @@ class AllVariantsAdapter:
         """
         logger.info("Loading data.")
 
-        # read from csv 'data/all_variants.sampled.csv'
-        data = pd.read_csv("data/all_variants.sampled.csv", sep="\t", header=0)
+        # read from csv
+        data = pd.read_csv("data/synthetic_variants.csv", sep="\t", header=0)
 
         # one row is one variant node, first select the columns given by the
         # node_fields parameter
@@ -171,17 +171,19 @@ class AllVariantsAdapter:
 
         # if ID is '.', generate md5 hash from other columns
         self.variants["ID"] = self.variants.apply(
-            lambda row: hashlib.md5(
-                "".join(
-                    [
-                        str(row[column])
-                        for column in self.variants.columns
-                        if column not in self._drop_columns
-                    ]
-                ).encode("utf-8")
-            ).hexdigest()
-            if row["ID"] == "."
-            else row["ID"],
+            lambda row: (
+                hashlib.md5(
+                    "".join(
+                        [
+                            str(row[column])
+                            for column in self.variants.columns
+                            if column not in self._drop_columns
+                        ]
+                    ).encode("utf-8")
+                ).hexdigest()
+                if row["ID"] == "."
+                else row["ID"]
+            ),
             axis=1,
         )
 
