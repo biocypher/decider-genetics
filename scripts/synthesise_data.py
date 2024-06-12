@@ -29,7 +29,7 @@ for patient in [
         for index, row in selection.iterrows():
             random_tissues = random.sample(tissues, random.randint(1, 5))
             patient_with_tissues = [
-                row["patient"] + "_" + tissue for tissue in random_tissues
+                patient + "_" + tissue for tissue in random_tissues
             ]
             selection.at[index, "samples"] = ";".join(patient_with_tissues)
         selection.loc[:, "patient"] = patient
