@@ -33,12 +33,13 @@ class PandasAdapter:
             ],
         )
 
-        bio_process.loc[:, "id"] = "bp:" + bio_process["id"].str.replace(
+        bio_process.loc[:, "id"] = bio_process["id"].str.replace(
             ":biological_process", ""
         )
+        bio_process["name"] = bio_process.loc[:, "id"]
         bio_process.loc[:, "label"] = "biological_process"
-        bio_process = bio_process.drop(["name", "preferred_id"], axis=1)
-        bio_process = bio_process[bio_process["id"] != "bp:None"]
+        bio_process = bio_process.drop(["preferred_id"], axis=1)
+        bio_process = bio_process[bio_process["id"] != "None"]
 
         self.nodes = pd.concat([self.nodes, bio_process])
 
@@ -55,12 +56,12 @@ class PandasAdapter:
         gene_to_process.loc[:, "Gene"] = gene_to_process["Gene"].str.replace(
             ":gene_hugo", ""
         )
-        gene_to_process.loc[:, "BiologicalProcess"] = "bp:" + gene_to_process[
+        gene_to_process.loc[:, "BiologicalProcess"] = gene_to_process[
             "BiologicalProcess"
         ].str.replace(":biological_process", "")
         gene_to_process.loc[:, "Label"] = "gene_to_process"
         gene_to_process = gene_to_process[
-            gene_to_process["BiologicalProcess"] != "bp:None"
+            gene_to_process["BiologicalProcess"] != "None"
         ]
 
         self.edges = pd.concat([self.edges, gene_to_process])
@@ -74,10 +75,11 @@ class PandasAdapter:
         logger.info("Generating nodes.")
 
         for _, row in self.nodes.iterrows():
+            properties = row.drop(["id", "label"]).to_dict()
             yield (
                 row["id"],
                 row["label"],
-                {},
+                properties,
             )
 
     def get_edges(self):

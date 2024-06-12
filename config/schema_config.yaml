@@ -4,6 +4,9 @@ patient:
     is_a: individual organism
     represented_as: node
     label_in_input: patient
+    properties:
+        id: str
+        name: str
 
 sample:
     synonym_for: material sample
@@ -14,14 +17,35 @@ gene:
     represented_as: node
     preferred_id: hgnc
     label_in_input: gene
+    properties:
+        chr: str
+        start: int
+        end: int
+        strand: int
+        band: str
+        type: str
+        name: str
 
 biological process:
     represented_as: node
     label_in_input: biological_process
+    properties:
+        id: str
+        name: str
 
 sequence variant:
     represented_as: node
     label_in_input: variant
+    properties:
+        CHROM: str
+        POS: int
+        REF: str
+        ALT: str
+        Gene.MANE: str
+        CADD_phred: float
+        AAChange.MANE: str
+        COSMIC_TOTAL_OCC: str
+        CLNSIG: str
 
 patient to sample association:
     is_a: association

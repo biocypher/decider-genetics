@@ -226,7 +226,7 @@ class AllVariantsAdapter:
             yield (
                 patient,
                 "patient",
-                {},
+                {"name": patient},
             )
 
         # yield tuples for samples
