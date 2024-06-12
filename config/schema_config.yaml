@@ -1,6 +1,5 @@
 # add your desired knowledge graph components here
 
-
 patient:
     is_a: individual organism
     represented_as: node
@@ -16,10 +15,14 @@ gene:
     preferred_id: hgnc
     label_in_input: gene
 
+biological process:
+    represented_as: node
+    label_in_input: biological_process
+
 sequence variant:
     represented_as: node
     label_in_input: variant
-    
+
 patient to sample association:
     is_a: association
     represented_as: edge
@@ -39,3 +42,8 @@ sample to gene copy number alteration:
     is_a: association
     represented_as: edge
     label_in_input: copy_number_alteration
+
+gene to biological process association:
+    is_a: association
+    represented_as: edge
+    label_in_input: gene_to_process

@@ -15,6 +15,7 @@ from decider_genetics.adapters.cn_genes_adapter import (
     CnGenesAdapterGeneField,
     CnGenesAdapterEdgeField,
 )
+from decider_genetics.adapters.pandas_adapter import PandasAdapter
 
 bc = BioCypher(
     biocypher_config_path="config/biocypher_config.yaml",
@@ -105,12 +106,17 @@ cn_adapter = CnGenesAdapter(
     edge_fields=cn_edge_fields,
 )
 
+pandas_adapter = PandasAdapter()
+
 # Create a knowledge graph from the adapters
 bc.write_nodes(variant_adapter.get_nodes())
 bc.write_nodes(cn_adapter.get_nodes())
 
 bc.write_edges(variant_adapter.get_edges())
 bc.write_edges(cn_adapter.get_edges())
+
+bc.write_nodes(pandas_adapter.get_nodes())
+bc.write_edges(pandas_adapter.get_edges())
 
 bc.write_schema_info(as_node=True)
 
