@@ -48,7 +48,7 @@ services:
         condition: service_completed_successfully
   
   app:
-    image: biocypher/biochatter-light:0.4.5
+    image: biocypher/biochatter-light:0.4.6
     container_name: app
     ports:
       - "8501:8501"
@@ -59,6 +59,10 @@ services:
         condition: service_completed_successfully
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - CHAT_TAB=false
+      - PROMPT_ENGINEERING_TAB=false
+      - RAG_TAB=false
+      - KNOWLEDGE_GRAPH_TAB=true
 
 volumes:
   biocypher_neo4j_volume:
