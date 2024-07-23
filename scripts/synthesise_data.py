@@ -9,6 +9,14 @@ bp_genes = pd.read_csv(
 gene_list = bp_genes["Gene.MANE"].unique().tolist()
 gene_list = [gene.replace(":gene_hugo", "") for gene in gene_list]
 
+# add oncokb genes
+oncokb_genes = pd.read_csv(
+    "data/oncokb_biomarker_drug_associations.tsv", sep="\t"
+)
+oncokb_genes = oncokb_genes["Gene"].drop_duplicates().tolist()
+gene_list.extend(oncokb_genes)
+gene_list = list(set(gene_list))
+
 tissues = ["Per", "Ova", "Ome", "Asc", "Lum"]
 data_variants = pd.read_csv("data/filtered_variants.csv", sep="\t")
 
@@ -22,6 +30,8 @@ for patient in [
 ]:
     for gene in gene_list:
         gene_data = data_variants[data_variants["Gene.MANE"] == gene]
+        if gene_data.empty:
+            continue
         random_patient = gene_data.sample(n=1, random_state=42)[
             "patient"
         ].values[0]
@@ -50,6 +60,8 @@ for patient in [
 ]:
     for gene in gene_list:
         gene_data_cns = data_cns[data_cns["Gene"] == gene]
+        if gene_data_cns.empty:
+            continue
         random_patient_cns = gene_data_cns.sample(n=1, random_state=42)[
             "sample"
         ].values[0]
