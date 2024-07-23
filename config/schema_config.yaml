@@ -26,6 +26,13 @@ gene:
         type: str
         name: str
 
+drug:
+    represented_as: node
+    input_label: drug
+    properties:
+        id: str
+        name: str
+
 biological process:
     represented_as: node
     input_label: biological_process
@@ -95,3 +102,14 @@ gene to biological process association:
     is_a: association
     represented_as: edge
     input_label: gene_to_process
+
+gene druggability association:
+    is_a: association
+    represented_as: edge
+    source: gene
+    target: drug
+    input_label: potentially_druggable
+    properties:
+        level: str
+        alteration: str
+        cancer_type: str
