@@ -32,6 +32,10 @@ for patient in [
         gene_data = data_variants[data_variants["Gene.MANE"] == gene]
         if gene_data.empty:
             continue
+        # randomly continue with probability prob
+        prob = 0.1
+        if prob < random.random():
+            continue
         random_patient = gene_data.sample(n=1, random_state=42)[
             "patient"
         ].values[0]
