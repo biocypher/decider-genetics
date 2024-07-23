@@ -8,10 +8,8 @@ as OncoKB) via natural language.
 
 ## 🐳 Run using Docker
 
-```{note}
-You need to have Docker installed on your machine to run the following commands.
-Please go to [Docker](https://docs.docker.com/get-docker/) for instructions.
-```
+> [!IMPORTANT]
+> You need to have Docker installed on your machine to run the following commands. Please go to [Docker](https://docs.docker.com/get-docker/) for instructions.
 
 ```{bash}
 git clone https://github.com/biocypher/decider-genetics.git
@@ -24,9 +22,8 @@ well as a BioChatter Light web app instance configured to only show the KG query
 interface. The Neo4j instance can be accessed at `localhost:7474` and the
 BioChatter Light instance at `localhost:8501`.
 
-```{note}
-For using OpenAI GPT as the language model, you will have to provide your API key as an environment variable (`OPENAI_API_KEY`) in your environment. You can do this using an export command (`export OPENAI_API_KEY=sk-...`) or by adding it to your bash profile; you could also provide it to Docker using an env file.
-```
+> [!IMPORTANT]
+> For using OpenAI GPT as the language model, you will have to provide your API key as an environment variable (`OPENAI_API_KEY`) in your environment. You can do this using an export command (`export OPENAI_API_KEY=sk-...`) or by adding it to your bash profile; you could also provide it to Docker using an env file.
 
 ## Questions
 
