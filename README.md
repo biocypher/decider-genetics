@@ -1,9 +1,52 @@
 # DECIDER genetics knowledge graph
 
-This pipeline creates a BioCypher knowledge graph from Hautaniemi lab pipeline
-outputs. It requires access to the data files to run.
+This pipeline creates a BioCypher knowledge graph from synthetic data after the
+example of the [DECIDER](https://deciderproject.eu) cohort. This knowledge graph
+is then connected to a BioChatter instance that allows querying the graph and
+other information (papers in a vector database, information from web APIs such
+as OncoKB) via natural language.
 
-## ⚙️ Installation (local, for docker see below)
+## 🐳 Run using Docker
+
+```{note}
+You need to have Docker installed on your machine to run the following commands.
+Please go to [Docker](https://docs.docker.com/get-docker/) for instructions.
+```
+
+```{bash}
+git clone https://github.com/biocypher/decider-genetics.git
+cd decider-genetics
+docker compose up -d
+```
+
+This will build the KG in the Docker container and start a Neo4j instance as
+well as a BioChatter Light web app instance configured to only show the KG query
+interface. The Neo4j instance can be accessed at `localhost:7474` and the
+BioChatter Light instance at `localhost:8501`.
+
+```{note}
+For using OpenAI GPT as the language model, you will have to provide your API key as an environment variable (`OPENAI_API_KEY`) in your environment. You can do this using an export command (`export OPENAI_API_KEY=sk-...`) or by adding it to your bash profile; you could also provide it to Docker using an env file.
+```
+
+## Questions
+
+The knowledge graph contains information about patients, genes, variants, drugs,
+pathways, and clinical data. The schema of the KG can be seen below the query
+interface as a JSON object. You can ask questions in natural language, such as:
+
+- How many patients do we have, and what are their names?
+
+- How many clinically significant (CLNSIG = Pathogenic or Likely_pathogenic)
+variants does each patient have?
+
+- Does patient1 have a sequence variant in a gene that is druggable with
+evidence level "1"? Which drug? Return unique values.
+
+These are only few of infinitely many possible questions, and some may not
+result in a valid query. The BioChatter Light interface allows manual
+modification and rerunning of the query for prototyping and debugging.
+
+## ⚙️ Local Installation
 ```{bash}
 git clone https://github.com/biocypher/decider-genetics.git
 cd decider-genetics
@@ -11,7 +54,7 @@ poetry install
 poetry run python create_knowledge_graph.py
 ```
 
-## 🐳 Docker
+## 🐳 Docker configuration
 
 This repo also contains a `docker compose` workflow to create the example
 database using BioCypher and load it into a dockerised Neo4j instance
