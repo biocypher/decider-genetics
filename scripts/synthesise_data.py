@@ -23,6 +23,7 @@ data_variants = pd.read_csv("data/filtered_variants.csv", sep="\t")
 # create list of patients (strings) from patient1 to patient20
 patients = ["patient" + str(i) for i in range(1, 21)]
 
+# create synthetic sequence variant data
 synthetic_data_variants = []
 for patient in patients:
     for gene in gene_list:
@@ -54,6 +55,7 @@ synthetic_data_variants.to_csv(
     "data/synthetic_variants.csv", index=False, sep="\t"
 )
 
+# create synthetic copy number variant data
 data_cns = pd.read_csv("data/filtered_cns.csv", sep="\t")
 synthetic_data_cns = []
 for patient in patients:
@@ -77,3 +79,36 @@ for patient in patients:
         synthetic_data_cns.append(selection_cns)
 synthetic_data_cns = pd.concat(synthetic_data_cns)
 synthetic_data_cns.to_csv("data/synthetic_cns.csv", index=False, sep="\t")
+
+# create synthetic clinical data
+data_clinical = pd.read_csv(
+    "data/clinical_raw.tsv", sep="\t", encoding="utf-16"
+)
+synthetic_data_clinical = []
+for patient in patients:
+    # construct a synthetic row by selecting random rows from the clinical data
+    # for each individual column of the original data
+    synthetic_row = {}
+    synthetic_row["patient"] = patient
+    for column in data_clinical.columns:
+        # select a random row from the original data
+        if column in [
+            "Patient ID",
+            "Patient card::Patient cohort code_Patient Card",
+            "Patient card::Publication code",
+            "Patient card::Patient with sequenced samples_sent_ proceed",
+        ]:
+            continue
+        random_row = data_clinical.sample(n=1)
+        # set the value of the synthetic row to the value of the random row
+        data = random_row[column].values[0]
+        if isinstance(data, str):
+            data = data.replace("\n", ", ")
+        synthetic_row[column] = data
+
+    # set the patient ID to the current patient
+    synthetic_data_clinical.append(synthetic_row)
+synthetic_data_clinical = pd.DataFrame(synthetic_data_clinical)
+synthetic_data_clinical.to_csv(
+    "data/synthetic_clinical.csv", index=False, sep=";"
+)
