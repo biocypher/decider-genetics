@@ -20,14 +20,11 @@ gene_list = list(set(gene_list))
 tissues = ["Per", "Ova", "Ome", "Asc", "Lum"]
 data_variants = pd.read_csv("data/filtered_variants.csv", sep="\t")
 
+# create list of patients (strings) from patient1 to patient20
+patients = ["patient" + str(i) for i in range(1, 21)]
+
 synthetic_data_variants = []
-for patient in [
-    "patient1",
-    "patient2",
-    "patient3",
-    "patient4",
-    "patient5",
-]:
+for patient in patients:
     for gene in gene_list:
         gene_data = data_variants[data_variants["Gene.MANE"] == gene]
         if gene_data.empty:
@@ -47,6 +44,10 @@ for patient in [
             ]
             selection.at[index, "samples"] = ";".join(patient_with_tissues)
         selection.loc[:, "patient"] = patient
+        # randomly select 10% of selection, but at least one row
+        selection = selection.sample(
+            n=max(1, int(len(selection) * 0.1)), random_state=42
+        )
         synthetic_data_variants.append(selection)
 synthetic_data_variants = pd.concat(synthetic_data_variants)
 synthetic_data_variants.to_csv(
@@ -55,17 +56,17 @@ synthetic_data_variants.to_csv(
 
 data_cns = pd.read_csv("data/filtered_cns.csv", sep="\t")
 synthetic_data_cns = []
-for patient in [
-    "patient1",
-    "patient2",
-    "patient3",
-    "patient4",
-    "patient5",
-]:
+for patient in patients:
     for gene in gene_list:
         gene_data_cns = data_cns[data_cns["Gene"] == gene]
         if gene_data_cns.empty:
             continue
+        # randomly continue with probability prob
+        prob = 0.1
+        if prob < random.random():
+            continue
+        alleles = gene_data_cns["nMajor"] + gene_data_cns["nMinor"]
+        gene_data_cns = gene_data_cns[alleles > 4]
         random_patient_cns = gene_data_cns.sample(n=1, random_state=42)[
             "sample"
         ].values[0]
