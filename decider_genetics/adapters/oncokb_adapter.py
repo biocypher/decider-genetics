@@ -16,9 +16,6 @@ class OncoKBAdapter:
     def _load_data(self) -> None:
         logger.info("Loading data.")
 
-        self.nodes = pd.DataFrame()
-        self.edges = pd.DataFrame()
-
         # read from csv
         raw_df = pd.read_csv(
             "data/oncokb_biomarker_drug_associations.tsv",
