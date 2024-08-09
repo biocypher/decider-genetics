@@ -49,26 +49,10 @@ sequence variant:
         COSMIC_TOTAL_OCC: str
         CLNSIG: str
 
-patient to variant association:
-    is_a: association
-    represented_as: edge
-    source: patient
-    target: sequence variant
-    input_label: patient_has_variant
-
-variant to gene association:
-    is_a: association
-    represented_as: edge
-    source: sequence variant
-    target: gene
-    input_label: variant_in_gene
-
-patient has copy number alteration in:
-    is_a: association
-    represented_as: edge
-    source: patient
-    target: gene
-    input_label: copy_number_alteration
+copy number alteration:
+    is_a: biological entity
+    represented_as: node
+    input_label: copy_number_variant
     properties:
         nMajor: float
         nMinor: float
@@ -78,6 +62,34 @@ patient has copy number alteration in:
         minPurifiedLogR: float
         maxPurifiedLogR: float
         breaksInGene: int
+
+patient to sequence variant association:
+    is_a: association
+    represented_as: edge
+    source: patient
+    target: sequence variant
+    input_label: patient_has_variant
+
+patient to copy number alteration association:
+    is_a: association
+    represented_as: edge
+    source: patient
+    target: copy number alteration
+    input_label: patient_has_copy_number_variant
+
+sequence variant to gene association:
+    is_a: association
+    represented_as: edge
+    source: sequence variant
+    target: gene
+    input_label: variant_in_gene
+
+copy number alteration to gene association:
+    is_a: association
+    represented_as: edge
+    source: copy number alteration
+    target: gene
+    input_label: copy_number_variant_in_gene
 
 gene to biological process association:
     is_a: association

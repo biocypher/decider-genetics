@@ -147,8 +147,8 @@ class CnGenesAdapter:
             ]
         ].drop_duplicates()
 
-        # generate an edge id for each variant using the md5 hash of all columns
-        self.variants["EDGE_ID"] = self.variants.apply(
+        # generate an id for each variant using the md5 hash of all columns
+        self.variants["VARIANT_ID"] = self.variants.apply(
             lambda row: hashlib.md5(
                 "".join(
                     [str(row[column]) for column in self.variants.columns]
@@ -178,7 +178,31 @@ class CnGenesAdapter:
                 node.drop(CnGenesAdapterGeneField.NAME.value).to_dict(),
             )
 
-        # SAMPLES: should already be created by the all_variants adapter
+        # VARIANTS: for each node (row), yield a 3-tuple of node id (the 'VARIANT_ID'
+        # column), node label (hardcode to 'copy_number_variant' for now), and
+        # node properties
+
+        for _, row in self.variants.iterrows():
+            _props = row.drop(
+                [
+                    "VARIANT_ID",
+                    CnGenesAdapterSampleField.ID.value,
+                    CnGenesAdapterGeneField.NAME.value,
+                ]
+            ).to_dict()
+
+            # replace 'nan' with 'NaN' in N_MAJOR and N_MINOR; otherwise, Neo4j
+            # will throw an error (can't deal with 'nan')
+            if math.isnan(_props[CnGenesAdapterEdgeField.N_MAJOR.value]):
+                _props[CnGenesAdapterEdgeField.N_MAJOR.value] = "NaN"
+            if math.isnan(_props[CnGenesAdapterEdgeField.N_MINOR.value]):
+                _props[CnGenesAdapterEdgeField.N_MINOR.value] = "NaN"
+
+            yield (
+                row["VARIANT_ID"],
+                "copy_number_variant",
+                _props,
+            )
 
     def get_edges(self):
         """
@@ -193,27 +217,23 @@ class CnGenesAdapter:
         # (all columns except the source and target node ids)
 
         for _, row in self.variants.iterrows():
-            _props = row.drop(
-                [
-                    "EDGE_ID",
-                    CnGenesAdapterSampleField.ID.value,
-                    CnGenesAdapterGeneField.NAME.value,
-                ]
-            ).to_dict()
 
-            # replace 'nan' with 'NaN' in N_MAJOR and N_MINOR; otherwise, Neo4j
-            # will throw an error (can't deal with 'nan')
-            if math.isnan(_props[CnGenesAdapterEdgeField.N_MAJOR.value]):
-                _props[CnGenesAdapterEdgeField.N_MAJOR.value] = "NaN"
-            if math.isnan(_props[CnGenesAdapterEdgeField.N_MINOR.value]):
-                _props[CnGenesAdapterEdgeField.N_MINOR.value] = "NaN"
-
+            # patient to variant
             yield (
-                row["EDGE_ID"],
+                None,
                 row[CnGenesAdapterSampleField.ID.value],
+                row["VARIANT_ID"],
+                "patient_has_copy_number_variant",
+                {},
+            )
+
+            # variant to gene
+            yield (
+                None,
+                row["VARIANT_ID"],
                 f"{row[CnGenesAdapterGeneField.NAME.value]}",
-                "copy_number_alteration",
-                _props,
+                "copy_number_variant_in_gene",
+                {},
             )
 
     def _set_types_and_fields(
