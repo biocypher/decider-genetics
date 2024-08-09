@@ -82,7 +82,7 @@ variant to gene association:
     target: gene
     input_label: variant_in_gene
 
-patient to gene copy number alteration:
+patient has copy number alteration in:
     is_a: association
     represented_as: edge
     source: patient
