@@ -1,21 +1,21 @@
-Patient;Age;BMI;Stage;Treatment;Chemotherapy cycles;Maintenance;PARPi;Primary outcome;BRCA mutation;HRD
-patient1;70;24,84098009;IVA;PDS;6.0;No;No;Partial Response;Yes;
-patient2;61;27,14158239;IIIC;PDS;6.0;Bevacizumab;Yes;;;
-patient3;67;33,12130679;IVB;NACT;6.0;No;No;Progressive Disease;;
-patient4;70;27,60945176;IIIB;PDS;6.0;No;ND;Complete Response;;
-patient5;57;19,94805977;IIIC;NACT;6.0;No;Yes;Partial Response;Yes;
-patient6;72;24,64099896;IVB;NACT;6.0;No;Yes;;Yes;
-patient7;40;31,64428577;IIIC;PDS;6.0;bevacizumab;No;Partial Response;;
-patient8;57;21,45357371;IIB;NACT;6.0;No;Yes;Stable Disease;;HRD positive
-patient9;83;24,38652644;IIIC;PDS;6.0;bevacizumab;No;Partial Response;;
-patient10;68;22,77318641;IIIC;NACT;5.0;No;ND;ND;Yes;
-patient11;80;27,62492564;IVA;NACT;6.0;bevacizumab;ND;Partial Response;;
-patient12;75;23,7953599;IIIC;PDS;6.0;bevacizumab;No;Complete Response;;
-patient13;59;19,6282647;;NACT;5.0;Bevacizumab +olaparib;No;Complete Response;;HRD negative
-patient14;82;27,76709812;IIIC;PDS;7.0;No;No;Complete Response;;
-patient15;73;23,62444749;IIIC;NACT;5.0;bevacizumab;ND;Partial Response;;
-patient16;71;29,69104308;IVA;PDS;6.0;No;No;Stable Disease;Yes;
-patient17;74;21,70792339;IVA;PDS;6.0;Placebo, Bevacizumab;ND;Complete Response;;
-patient18;75;19,70553242;IVA;NACT;6.0;bevacizumab;No;Complete Response;;
-patient19;63;28,71972318;IIIC;NACT;6.0;No;Yes;Partial Response;Yes;
-patient20;59;25,46198063;IIIA1;NACT;7.0;Olaparib;Yes;Complete Response;;HRD positive
+Patient;Age;BMI;Stage;Treatment;Chemotherapy cycles;Maintenance;PARPi;Primary outcome;BRCA mutation;HR deficient
+patient1;72;21,484375;IVB;PDS;6.0;No;No;Partial Response;;HRD negative
+patient2;64;28,62879239;IIB;PDS;6.0;;No;Partial Response;Yes;
+patient3;70;26,83864765;IVA;NACT;6.0;No;Yes;Partial Response;;
+patient4;78;23,05456246;IVA;NACT;6.0;Letrozole;No;Partial Response;;HRD positive
+patient5;75;20,703125;IVB;PDS;6.0;No;No;Progressive Disease;;HRD negative
+patient6;71;25,7963725;IIIC;NACT;6.0;No;Yes;Partial Response;;
+patient7;66;26,42356982;IIIC;NACT;6.0;;ND;Stable Disease;;HRD negative
+patient8;78;35,430839;IIB;PDS;6.0;;No;Complete Response;Yes;HRD positive
+patient9;75;26,6287779;IIIC;NACT;6.0;Bevacizumab +olaparib;Yes;Complete Response;Yes;Insuff material
+patient10;75;25,10239133;IIIC;NACT;6.0;;ND;Partial Response;;
+patient11;56;21,56454491;IVB;NACT;6.0;bevacizumab;Yes;Complete Response;;
+patient12;70;19,05197378;IIIC;NACT;6.0;Niraparib/placebo;ND;Complete Response;;HRD positive
+patient13;74;21,484375;IIIC;PDS;3.0;bevacizumab;Yes;Partial Response;;
+patient14;77;23,05456246;IIIC;NACT;6.0;No;No;;Yes;
+patient15;66;35,21825397;IIIC;PDS;6.0;Bevacizumab +olaparib;Yes;Complete Response;Yes;HRD positive
+patient16;77;33,09042237;IVB;PDS;9.0;No;No;Partial Response;Yes;
+patient17;59;33,12770389;IIIC;PDS;6.0;Olaparib/placebo, Durvalumab/placebo;No;ND;;
+patient18;83;19,36983471;IIIC;PDS;1.0;Niraparib;Yes;Partial Response;Yes;
+patient19;70;29,03178981;IIIC;PDS;3.0;bevacizumab;No;Complete Response;;HRD negative
+patient20;71;25,56049317;IC1;PDS;6.0;bevacizumab;ND;Complete Response;;

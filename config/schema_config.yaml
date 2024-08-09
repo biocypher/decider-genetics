@@ -13,10 +13,10 @@ patient:
         treatment: str
         chemotherapy_cycles: int
         maintenance: str
-        parpi: str
+        parpi: bool
         primary_outcome: str
-        brca_mutation: str
-        hrd: str
+        brca_mutation: bool
+        hr_deficient: bool
 
 gene:
     represented_as: node

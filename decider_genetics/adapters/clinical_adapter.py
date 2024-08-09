@@ -93,6 +93,19 @@ class ClinicalAdapter:
             _props["bmi"] = float(_props["bmi"].replace(",", "."))
             _props["chemotherapy_cycles"] = int(_props["chemotherapy_cycles"])
 
+            # convert parpi, brca_mutation, and hr_deficient to boolean
+            _props["parpi"] = str(_props["parpi"]).lower() == "yes"
+            _props["brca_mutation"] = (
+                str(_props["brca_mutation"]).lower() == "yes"
+            )
+            _props["hr_deficient"] = (
+                str(_props["hr_deficient"]).lower() == "hrd positive"
+            )
+            # convert bool to lowercase string
+            _props["parpi"] = str(_props["parpi"]).lower()
+            _props["brca_mutation"] = str(_props["brca_mutation"]).lower()
+            _props["hr_deficient"] = str(_props["hr_deficient"]).lower()
+
             yield (
                 patient_id,
                 "patient",

@@ -130,7 +130,7 @@ synthetic_data_clinical.columns = [
     "PARPi",
     "Primary outcome",
     "BRCA mutation",
-    "HRD",
+    "HR deficient",
 ]
 synthetic_data_clinical.to_csv(
     "data/synthetic_clinical.csv", index=False, sep=";"
