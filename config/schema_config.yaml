@@ -8,11 +8,6 @@ patient:
         id: str
         name: str
 
-sample:
-    synonym_for: material sample
-    represented_as: node
-    input_label: sample
-
 gene:
     represented_as: node
     preferred_id: hgnc
@@ -53,20 +48,6 @@ sequence variant:
         AAChange.MANE: str
         COSMIC_TOTAL_OCC: str
         CLNSIG: str
-
-patient to sample association:
-    is_a: association
-    represented_as: edge
-    source: patient
-    target: sample
-    input_label: patient_has_sample
-
-sample to variant association:
-    is_a: association
-    represented_as: edge
-    source: sample
-    target: sequence variant
-    input_label: sample_has_variant
 
 patient to variant association:
     is_a: association

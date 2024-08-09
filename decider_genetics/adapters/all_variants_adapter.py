@@ -229,13 +229,13 @@ class AllVariantsAdapter:
                 {"name": patient},
             )
 
-        # yield tuples for samples
-        for sample in samples:
-            yield (
-                sample,
-                "sample",
-                {},
-            )
+        # # yield tuples for samples
+        # for sample in samples:
+        #     yield (
+        #         sample,
+        #         "sample",
+        #         {},
+        #     )
 
         # VARIANTS: for each node (row), yield a 3-tuple of node id (the 'ID'
         # column), node label (hardcode to 'variant' for now), and node
