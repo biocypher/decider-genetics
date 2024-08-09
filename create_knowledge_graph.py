@@ -17,6 +17,7 @@ from decider_genetics.adapters.cn_genes_adapter import (
 )
 from decider_genetics.adapters.pandas_adapter import PandasAdapter
 from decider_genetics.adapters.oncokb_adapter import OncoKBAdapter
+from decider_genetics.adapters.clinical_adapter import ClinicalAdapter
 
 bc = BioCypher(
     biocypher_config_path="config/biocypher_config.yaml",
@@ -109,12 +110,14 @@ cn_adapter = CnGenesAdapter(
 
 pandas_adapter = PandasAdapter()
 oncokb_adapter = OncoKBAdapter()
+clinical_adapter = ClinicalAdapter()
 
 # Create a knowledge graph from the adapters
 bc.write_nodes(variant_adapter.get_nodes())
 bc.write_nodes(cn_adapter.get_nodes())
 bc.write_nodes(pandas_adapter.get_nodes())
 bc.write_nodes(oncokb_adapter.get_nodes())
+bc.write_nodes(clinical_adapter.get_nodes())
 
 bc.write_edges(variant_adapter.get_edges())
 bc.write_edges(cn_adapter.get_edges())

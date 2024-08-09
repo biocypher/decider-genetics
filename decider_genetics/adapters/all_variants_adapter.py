@@ -207,27 +207,27 @@ class AllVariantsAdapter:
 
         logger.info("Generating nodes.")
 
-        # get unique patients as list
-        patients = (
-            self.patients[[AllVariantsAdapterPatientField.ID.value]]
-            .drop_duplicates()[AllVariantsAdapterPatientField.ID.value]
-            .tolist()
-        )
+        # # get unique patients as list
+        # patients = (
+        #     self.patients[[AllVariantsAdapterPatientField.ID.value]]
+        #     .drop_duplicates()[AllVariantsAdapterPatientField.ID.value]
+        #     .tolist()
+        # )
 
-        # get unique samples
-        samples = (
-            self.variants[[AllVariantsAdapterSampleField.ID.value]]
-            .drop_duplicates()[AllVariantsAdapterSampleField.ID.value]
-            .tolist()
-        )
+        # # get unique samples
+        # samples = (
+        #     self.variants[[AllVariantsAdapterSampleField.ID.value]]
+        #     .drop_duplicates()[AllVariantsAdapterSampleField.ID.value]
+        #     .tolist()
+        # )
 
-        # yield tuples for patients
-        for patient in patients:
-            yield (
-                patient,
-                "patient",
-                {"name": patient},
-            )
+        # # yield tuples for patients
+        # for patient in patients:
+        #     yield (
+        #         patient,
+        #         "patient",
+        #         {"name": patient},
+        #     )
 
         # # yield tuples for samples
         # for sample in samples:

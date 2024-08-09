@@ -71,8 +71,30 @@ class ClinicalAdapter:
         logger.info("Loading data.")
 
         # read from csv
-        raw_df = pd.read_csv(
+        self.nodes = pd.read_csv(
             "data/synthetic_clinical.csv",
             sep=";",
             header=0,
         )
+
+    def get_nodes(self):
+        """
+        Iterate through the rows and create a node for each patient, yielding a
+        tuple of name, "patient", and dictionary of properties (other columns).
+        """
+
+        for _, row in self.nodes.iterrows():
+            # create a unique identifier for the patient
+            patient_id = row["Patient"]
+            _props = row.drop("Patient").to_dict()
+            # lowercase the keys, replace space with underscore
+            _props = {k.lower().replace(" ", "_"): v for k, v in _props.items()}
+            _props["name"] = row["Patient"]
+            _props["bmi"] = float(_props["bmi"].replace(",", "."))
+            _props["chemotherapy_cycles"] = int(_props["chemotherapy_cycles"])
+
+            yield (
+                patient_id,
+                "patient",
+                _props,
+            )

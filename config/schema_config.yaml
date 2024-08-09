@@ -7,6 +7,16 @@ patient:
     properties:
         id: str
         name: str
+        age: int
+        bmi: float
+        stage: str
+        treatment: str
+        chemotherapy_cycles: int
+        maintenance: str
+        parpi: str
+        primary_outcome: str
+        brca_mutation: str
+        hrd: str
 
 gene:
     represented_as: node
