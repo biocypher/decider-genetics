@@ -1,4 +1,5 @@
 import hashlib
+import random
 import pandas as pd
 from biocypher._logger import logger
 
@@ -105,6 +106,18 @@ class ClinicalAdapter:
             _props["parpi"] = str(_props["parpi"]).lower()
             _props["brca_mutation"] = str(_props["brca_mutation"]).lower()
             _props["hr_deficient"] = str(_props["hr_deficient"]).lower()
+
+            # add fake severe_adverse_reaction randomly
+            drugs = [
+                "cisplatin",
+                "bevacizumab",
+                "abeciclib",
+                "olaparib",
+                "paclitaxel",
+            ]
+            # with 20% probability, sample one of the drugs
+            if random.random() < 0.2:
+                _props["severe_adverse_reaction_to"] = random.choice(drugs)
 
             yield (
                 patient_id,

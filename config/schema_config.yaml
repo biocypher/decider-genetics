@@ -17,6 +17,7 @@ patient:
         primary_outcome: str
         brca_mutation: bool
         hr_deficient: bool
+        severe_adverse_reaction_to: str
 
 gene:
     represented_as: node
