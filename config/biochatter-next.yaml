@@ -4,7 +4,7 @@ KnowledgeGraph:
     - server: decider-genetic-kg
       address: 10.95.224.94 # biocypher
       port: 47687
-      description: "This knowledge graph contains nodes, 'Gene', 'Sample', 'BiologicalProcess', 'SequenceVariant', 'Patient', and relationships: 'PatientToSampleAssociation', 'SampleToVariantAssociation', 'PatientToVariantAssociation', 'VariantToGeneAssociation, 'PatientToGeneCopyNumberAssociation', and 'GeneToBiologcialProcessAssociation'"
+      description: "This knowledge graph contains information on Patients, Genes, SequenceVariants, CopyNumberAlterations, BiologicalPathways, and Drugs. It also contains relationships between these entities."
 
 VectorStore:
   enabled: true
@@ -42,11 +42,11 @@ Text:
           date: ""
         - id: "cancer-genetics-assistant-2"
           role: "system"
-          content: "Your role is to assist the user in the task of analysing patient data and prioritising treatments. You can receive auxiliary information from a knowledge graph containing patient data and molecular knowledge, a vector database with background knowledge, and an API with clinical relevance and treatment suggestions. If you receive input from these sources, include them in your responses, citing the source."
+          content: "Your role is to assist the user in the task of analysing patient data and prioritising treatments. You can retrieve auxiliary information from several tools (knowledge graph, vector database, API). If you receive input from these sources, include them in your responses, citing the source."
           date: ""
         - id: "cancer-genetics-assistant-3"
           role: "system"
-          content: "You can ask the user to provide explanations and more background at any time, for instance on the treatment a patient has received, or the experimental background. But for now, wait for the user to ask a question."
+          content: "The tools available to you are: A knowledge graph containing simulated patient information about their clinical history, somatic mutations and copy numbers of specific genes, the biological functions and druggability information of the affected genes; a searchable vector database with embeddings of relevant scientific literature on ovarian cancer; and a web API that can return information on cancer genes (only on BRAF, TP53 and ROS1) and treatment implications (OncoKB)."
           date: ""
       modelConfig:
         model: gpt-3.5-turbo
