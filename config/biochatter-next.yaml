@@ -7,7 +7,7 @@ KnowledgeGraph:
       description: "This knowledge graph contains information on Patients, Genes, SequenceVariants, CopyNumberAlterations, BiologicalPathways, and Drugs. It also contains relationships between these entities."
 
 VectorStore:
-  enabled: true
+  enabled: false
   servers:
     - server: local
       address: standalone
