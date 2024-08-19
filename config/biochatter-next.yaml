@@ -23,15 +23,24 @@ Text:
     Disclaimer: "This is a use case demonstration, not a final product; not to be used in patient diagnosis or treatment. The data and information provided here are synthetic (in the case of patient data) or limited by demo access (in the case of the OncoKB API). This means that the API only returns full information of BRAF, TP53 and ROS1, but no other genes. For full access, an individual registration with OncoKB is necessary."
     About:
       Title: About
-      Citation: "BioChatter is developed by a multicultural team over on [GitHub](https://github.com/biocypher) ([BioChatter](https://github.com/biocypher/biochatter), [BioChatter Server](https://github.com/biocypher/biochatter-server), [BioChatter Next](https://github.com/biocypher/biochatter-next), [BioChatter Light](https://github.com/biocypher/biochatter-light)), led by [Sebastian Lobentanzer](https://slobentanzer.github.io/). Biochatter Next was developed by Shaohong Feng and Cankun Wang, and is hosted by [BMBL](https://u.osu.edu/bmbl)."
-      ListTitle: "BioChatter is a tool to integrate biomedical research with current developments in Large Language Models in a user-friendly package. This pre-configured use case is its application to the complex problem of cancer genetics and treatment suggestion. The conversational interface integrates information from various sources and facilitates their interpretation through natural language. The components are:"
-      ListItems:
-        - "Results from patient whole genome and RNA sequencing, yielding short variant calls, copy number alterations, gene fusion events, and gene expression levels (synthetic data, available via KG)"
-        - "External prior knowledge on biological processes, pathways, druggability (real public data, available via KG)"
+      Body1: "BioChatter is a tool to integrate biomedical research with current developments in Large Language Models in a user-friendly package. This pre-configured use case is its application to the complex problem of cancer genetics and treatment suggestion. The conversational interface integrates information from various sources and facilitates their interpretation through natural language. The components are:"
+      ListItems1:
+        - "Results from patient whole genome and RNA sequencing, yielding short variant calls, copy number alterations, and gene expression levels (synthetic data, available via KG)"
+        - "External prior knowledge on biological processes, pathways, ... (real public data, available via KG)"
         - "External information on the clinical relevance of genetic alterations and approved/pipeline treatments (real public data, demo version limited to few genes, available via API)"
         - "Background knownledge of the ovarian cancer studied through semantic search in embeddings of relevant scientific literature (real public data, available via vector database RAG)"
       Heading2: How to use
-      Models: "The app is pre-configured with all relevant information. You can ask the chat bot questions about the enriched patient data (KG), the biological background (vector DB), and clinical relevance / treatment suggestions for alterations (API). For connecting to each of the resources, please select the corresponding checkbox in the lower right (KG, KG RAG, or API). Here are some questions that you can ask:"
+      Body2: "The app is pre-configured with all relevant information. You can ask the chat bot questions about the enriched patient data (KG), the biological background (vector DB), and clinical relevance / treatment suggestions for alterations (API). For connecting to each of the resources, please select the corresponding checkbox in the lower right (KG, KG RAG, or API). Here are some questions that you can ask:"
+      ListItems2:
+        - (KG) How many patients do we have on record, and what are their names?
+        - (KG) Does patient1 have a sequence variant in a gene that is druggable? Which drug, and what evidence level has the association?
+        - (KG) Does patient1 have a sequence variant in a gene that is druggable with evidence level "1"?
+        - (RAG) 1
+        - (RAG) 2
+        - (API) 1
+        - (API) 2
+      Citation: "BioChatter is developed by a multicultural team over on [GitHub](https://github.com/biocypher) ([BioChatter](https://github.com/biocypher/biochatter), [BioChatter Server](https://github.com/biocypher/biochatter-server), [BioChatter Next](https://github.com/biocypher/biochatter-next), [BioChatter Light](https://github.com/biocypher/biochatter-light)), led by [Sebastian Lobentanzer](https://slobentanzer.github.io/). Biochatter Next was developed by Shaohong Feng and Cankun Wang, and is hosted by [BMBL](https://u.osu.edu/bmbl)."
+
   Masks:
     - name: Cancer Genetics Assistant
       avatar: "🧑<200d>🔬"
