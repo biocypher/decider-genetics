@@ -2,12 +2,12 @@ KnowledgeGraph:
   enabled: true
   servers:
     - server: decider-genetic-kg
-      address: deploy 
+      address: deploy
       port: 7687
       description: "This knowledge graph contains information on Patients, Genes, SequenceVariants, CopyNumberAlterations, BiologicalPathways, and Drugs. It also contains relationships between these entities."
 
 VectorStore:
-  enabled: false
+  enabled: true
   servers:
     - server: local
       address: standalone
