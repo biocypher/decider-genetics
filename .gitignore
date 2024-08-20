@@ -2,6 +2,8 @@
 biocypher-*
 .vscode
 data/*
+*.env
+volumes/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
