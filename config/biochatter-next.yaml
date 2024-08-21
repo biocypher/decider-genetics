@@ -21,21 +21,15 @@ Text:
   Welcome:
     Title: Cancer Geneticist Assistant
     Disclaimer: |
-      This is a use case demonstration, not a final product; it should not to be used in patient diagnosis or treatment.
-      The data and information provided here are synthetic (in the case of patient data) or limited by demo access (in the case of the OncoKB API).
+      This is a use case demonstration, not a final product; it should not to be used in patient diagnosis or treatment. The data and information provided here are synthetic (in the case of patient data) or limited by demo access (in the case of the OncoKB API).
       ---
-      For instance, the OncoKB API only returns full information of BRAF, TP53 and ROS1, but no other genes; and the patients in our dataset have names such as 'patient1' and randomised data attributes.
-      For full access to the OncoKB API, an individual registration with OncoKB is necessary.
+      For instance, the OncoKB API only returns full information of BRAF, TP53 and ROS1, but no other genes; and the patients in our dataset have names such as 'patient1' and randomised data attributes. For full access to the OncoKB API, an individual registration with OncoKB is necessary.
       ___
       *Please be aware that fundamental issues, such as the confabulation problem, cannot be solved by this tool, which is mainly a technical demonstration. LLM-generated content can be inaccurate and misleading.*
     About:
       Title: About
       Body1: |
-        BioChatter is a tool to integrate biomedical research with current developments in Large Language Models in a user-friendly package.
-        This pre-configured use case is its application to the complex problem of cancer genetics and treatment suggestion.
-        The code for creating this tool is available on [GitHub](https://github.com/biocypher/decider-genetics); we also describe its creation in a [vignette](https://biochatter.org/vignettes/custom-decider-use-case) on our website.
-        The conversational interface integrates information from various sources and facilitates their interpretation through natural language.
-        The components are:
+        BioChatter is a tool to integrate biomedical research with current developments in Large Language Models in a user-friendly package. This pre-configured use case is its application to the complex problem of cancer genetics and treatment suggestion. The code for creating this tool is available on [GitHub](https://github.com/biocypher/decider-genetics); we also describe its creation in a [vignette](https://biochatter.org/vignettes/custom-decider-use-case) on our website. The conversational interface integrates information from various sources and facilitates their interpretation through natural language. The components are:
       ListItems1:
         - "Results from patient whole genome and RNA sequencing, yielding short variant calls, copy number alterations, and gene expression levels (synthetic data, available via KG)"
         - "External prior knowledge on biological processes, pathways, ... (real public data, available via KG)"
@@ -43,11 +37,7 @@ Text:
         - "Background knownledge of the ovarian cancer studied through semantic search in embeddings of relevant scientific literature (real public data, available via vector database RAG)"
       Heading2: How to use
       Body2: |
-        The app is pre-configured with all relevant information.
-        You can ask the chat bot questions about the enriched patient data (KG), the biological background (vector DB), and clinical relevance / treatment suggestions for alterations (API).
-        For connecting to each of the resources, please select the corresponding checkbox in the lower right (RAG, KG RAG, or API).
-        If one of the resources was used in the response, its results will be displayed in the contextual prompt widget (the rightmost button above the text input).
-        Here are some questions that you can ask (you can find copyable versions in the README of the [repository](https://github.com/biocypher/decider-genetics#questions)):
+        The app is pre-configured with all relevant information. You can ask the chat bot questions about the enriched patient data (KG), the biological background (vector DB), and clinical relevance / treatment suggestions for alterations (API). For connecting to each of the resources, please select the corresponding checkbox in the lower right (RAG, KG RAG, or API). If one of the resources was used in the response, its results will be displayed in the contextual prompt widget (the rightmost button above the text input). Here are some questions that you can ask (you can find copyable versions in the README of the [repository](https://github.com/biocypher/decider-genetics#questions)):
       ListItems2:
         - (KG) How many patients do we have on record, and what are their names?
         - (KG) Does patient1 have a sequence variant in a gene that is druggable? Which drug, and what evidence level has the association?
