@@ -13,9 +13,9 @@ You can find more detailed information in a
 website and see hosted demonstrations of both applications at the following
 links:
 
-- [Light](https://decider-light.biocypher.org)
+- Light: [https://decider-light.biocypher.org](https://decider-light.biocypher.org)
 
-- [Next](https://decider-next.biocypher.org)
+- Next: [https://decider-next.biocypher.org](https://decider-next.biocypher.org)
 
 ## 🐳 Run using Docker
 
