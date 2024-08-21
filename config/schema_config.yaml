@@ -106,6 +106,8 @@ gene to biological process association:
     is_a: association
     represented_as: edge
     input_label: gene_to_process
+    source: gene
+    target: biological process
 
 gene druggability association:
     is_a: association
