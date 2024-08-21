@@ -47,7 +47,7 @@ Text:
         You can ask the chat bot questions about the enriched patient data (KG), the biological background (vector DB), and clinical relevance / treatment suggestions for alterations (API).
         For connecting to each of the resources, please select the corresponding checkbox in the lower right (RAG, KG RAG, or API).
         If one of the resources was used in the response, its results will be displayed in the contextual prompt widget (the rightmost button above the text input).
-        Here are some questions that you can ask (you can find copyable versions in the README of the [repository](https://github.com/biocypher/decider-genetics)):
+        Here are some questions that you can ask (you can find copyable versions in the README of the [repository](https://github.com/biocypher/decider-genetics#questions)):
       ListItems2:
         - (KG) How many patients do we have on record, and what are their names?
         - (KG) Does patient1 have a sequence variant in a gene that is druggable? Which drug, and what evidence level has the association?
