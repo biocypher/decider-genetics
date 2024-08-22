@@ -72,6 +72,25 @@ These are only few of infinitely many possible questions, and some may not
 result in a valid query. The BioChatter Light interface allows manual
 modification and rerunning of the query for prototyping and debugging.
 
+### Vectorstore RAG and OncoKB API questions
+
+For convenience, here are some questions to get you started with the RAG and API
+calling features:
+
+- (OncoKB API) What is the consequence of the TP53 R273C mutation in high grade serous ovarian cancer?
+
+- (OncoKB API) Are there reports of of the functional fusion of CD47 and ROS1 in ovarian cancer?
+
+- (OncoKB API) What is the consequence of of the functional fusion of CD47 and ROS1?
+
+- (OncoKB API) What is the therapeutic relevance of the BRAF V600E mutation in high grade serous ovarian cancer?
+
+- (RAG) Have there been reports of TP53 being therapeutically relevant in HGSC?
+
+- (RAG) Do pro-inflammatory cytokines play a role in the progression of ovarian cancer?
+
+- (RAG) Does RAD51C play a role in ovarian cancer?
+
 ## ⚙️ Local Installation
 
 You can run the KG build locally using a virtual environment.
