@@ -37,16 +37,19 @@ Text:
         - "Background knownledge of the ovarian cancer studied through semantic search in embeddings of relevant scientific literature (real public data, available via vector database RAG)"
       Heading2: How to use
       Body2: |
-        The app is pre-configured with all relevant information. You can ask the chat bot questions about the enriched patient data (KG), the biological background (vector DB), and clinical relevance / treatment suggestions for alterations (API). For connecting to each of the resources, please select the corresponding checkbox in the lower right (RAG, KG RAG, or API). If one of the resources was used in the response, its results will be displayed in the contextual prompt widget (the rightmost button above the text input). Here are some questions that you can ask (you can find copyable versions in the README of the [repository](https://github.com/biocypher/decider-genetics#questions)):
+        The app is pre-configured with all relevant information. You can ask the chat bot questions about the enriched patient data (KG), the biological background (vector DB), and clinical relevance / treatment suggestions for alterations (API). For connecting to each of the resources, please select the corresponding checkbox in the lower right (RAG, KG RAG, or API). If one of the resources was used in the response, its results will be displayed in the contextual prompt widget (the rightmost button above the text input). Here are some questions that you can ask (you can find more and copyable questions in the README of the [repository](https://github.com/biocypher/decider-genetics#questions)):
       ListItems2:
-        - (KG) How many patients do we have on record, and what are their names?
-        - (KG) What was patient1's response to previous treatment, and which treatment did they receive?
-        - (KG) Does patient1 have a sequence variant in a gene that is druggable? Which drug, and what evidence level has the association? Return unique values.
-        - (KG) Does patient5 have a mutation in a gene that is druggable with level "1" evidence?
-        - (RAG) 1
-        - (RAG) 2
-        - (API) 1
-        - (API) 2
+        - (KG RAG) How many patients do we have on record, and what are their names?
+        - (KG RAG) What was patient1's response to previous treatment, and which treatment did they receive?
+        - (KG RAG) Which patients have hr deficiency but have not received parp inhibitors?
+        - (KG RAG) Does patient4 have a sequence variant in a gene that is druggable? Which drug, and what evidence level has the association? Return unique values.
+        - (OncoKB API) What is the consequence of the TP53 R273C mutation in high grade serous ovarian cancer?
+        - (OncoKB API) Are there reports of of the functional fusion of CD47 and ROS1 in ovarian cancer?
+        - (OncoKB API) What is the consequence of of the functional fusion of CD47 and ROS1?
+        - (OncoKB API) What is the therapeutic relevance of the BRAF V600E mutation in high grade serous ovarian cancer?
+        - (RAG) Have there been reports of TP53 being therapeutically relevant in HGSC?
+        - (RAG) Do pro-inflammatory cytokines play a role in the progression of ovarian cancer?
+        - (RAG) Does RAD51C play a role in ovarian cancer?
       Citation: "BioChatter is developed by a multicultural team over on [GitHub](https://github.com/biocypher) ([BioChatter](https://github.com/biocypher/biochatter), [BioChatter Server](https://github.com/biocypher/biochatter-server), [BioChatter Next](https://github.com/biocypher/biochatter-next), [BioChatter Light](https://github.com/biocypher/biochatter-light)), led by [Sebastian Lobentanzer](https://slobentanzer.github.io/). Biochatter Next was developed by Shaohong Feng and Cankun Wang, and is hosted by [BMBL](https://u.osu.edu/bmbl)."
 
   Masks:

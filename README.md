@@ -61,10 +61,12 @@ they receive?
 
 - Which patients have hr deficiency but have not received parp inhibitors?
 
-- Does patient1 have a sequence variant in a gene that is druggable with
+- Does patient4 have a sequence variant in a gene that is druggable with
 evidence level "1"? Which drug? Return unique values.
 
-- Is there a patient with overlapping variants compared to patient1?
+- Is there a patient with overlapping variants compared to patient4?
+
+- Which genes are these overlapping sequences in?
 
 These are only few of infinitely many possible questions, and some may not
 result in a valid query. The BioChatter Light interface allows manual
