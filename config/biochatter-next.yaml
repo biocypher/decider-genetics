@@ -54,7 +54,7 @@ Text:
 
   Masks:
     - name: Cancer Genetics Assistant
-      avatar: "🧑<200d>🔬"
+      avatar: "1f468-200d-1f52c" # "👨‍🔬" # "🧑<200d>🔬"
       context:
         - id: "cancer-genetics-assistant-1"
           role: "system"
