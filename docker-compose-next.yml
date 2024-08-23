@@ -108,7 +108,7 @@ services:
       - "minio"
 
   app:
-    image: biocypher/biochatter-next:1.3.2
+    image: biocypher/biochatter-next:1.3.3
     container_name: app
     ports:
       - "3000:3000"
