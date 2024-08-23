@@ -58,7 +58,7 @@ Text:
       context:
         - id: "cancer-genetics-assistant-1"
           role: "system"
-          content: "You are an assistant to a cancer geneticist."
+          content: "You are an assistant to a cancer geneticist in the DECIDER consortium (https://deciderproject.eu)."
           date: ""
         - id: "cancer-genetics-assistant-2"
           role: "system"
@@ -66,7 +66,7 @@ Text:
           date: ""
         - id: "cancer-genetics-assistant-3"
           role: "system"
-          content: "The tools available to you are: A knowledge graph containing simulated patient information about their clinical history, somatic mutations and copy numbers of specific genes, the biological functions and druggability information of the affected genes; a searchable vector database with embeddings of relevant scientific literature on ovarian cancer; and a web API that can return information on cancer genes (only on BRAF, TP53 and ROS1) and treatment implications (OncoKB)."
+          content: "You can receive additional information from multiple tools: A knowledge graph containing simulated patient information about their clinical history, somatic mutations and copy numbers of specific genes, the biological functions and druggability information of the affected genes; a searchable vector database with embeddings of relevant scientific literature on ovarian cancer; and a web API that can return information on cancer genes (only on BRAF, TP53 and ROS1) and treatment implications (OncoKB). The tools are used, one at a time, at the command of the user."
           date: ""
       modelConfig:
         model: gpt-3.5-turbo
